@@ -25,7 +25,9 @@
       }
       ```
 1. Create task execution role
+This will be created for you, if its the first time using ECS.  So, in the most part it is only necessary to check if the default role (AWSServiceRoleForECS) exists.  See [Create an IAM role](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/get-set-up-for-amazon-ecs.html#create-an-iam-role) for more information.
 1. Create a security group
+Create a basic security group allowing http traffic on port 80. See [Create a security group](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/get-set-up-for-amazon-ecs.html#create-a-base-security-group)
 
 
 ## Push Image to Repository
