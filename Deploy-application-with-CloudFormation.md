@@ -1,5 +1,3 @@
-# Deploy the application to ECS using CloudFormation
-
 1. Validate templates locally:
       ```
       $ cd cloudformation-templates/
