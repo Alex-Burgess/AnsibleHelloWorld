@@ -25,7 +25,7 @@
       }
       ```
 1. Create task execution role
-1. Create VPC network...
+1. Create a security group
 
 
 ## Push Image to Repository
@@ -98,8 +98,25 @@ Notes:
       ```
       $ aws ecs register-task-definition --cli-input-json file://task-def.json
       ```
+1. Create an ECS cluster
+      ```
+      aws ecs create-cluster --cluster-name docker-web-hw-cluster
+      ```
+1. Create a Service
+      ```
+      aws ecs create-service --cluster docker-web-hw-cluster \
+         --service-name web-hello-world-service \
+         --task-definition docker-web-hello-world:1 \
+         --desired-count 1 \
+         --launch-type "FARGATE" \
+         --network-configuration "awsvpcConfiguration={subnets=[subnet-2937dc4f],securityGroups=[sg-02039f7e],assignPublicIp="ENABLED"}"
+      ```
 
-
-Create Cluster
-Create Service
-Test Service
+1. Check that the task status is Running and get key information, including Elastic Network Interface ID
+      ```
+      $ aws ecs describe-tasks --cluster docker-web-hw-cluster --tasks 6ed8e22e-7ad6-425b-af8c-9844d384710f --query 'tasks[*].{clusterArn:clusterArn,taskArn:taskArn,taskDefinitionArn:taskDefinitionArn,Status:lastStatus,ENI:attachments[].details[?name==`networkInterfaceId`].value}'
+      ```
+1. Get the public IP of the container
+      ```
+      $ aws ec2 describe-network-interfaces --network-interface-ids eni-f89562dd --query 'NetworkInterfaces[*].Association.PublicIp'
+      ```
