@@ -23,8 +23,6 @@ Find the running/stopped container:
       $ docker ps -a
       CONTAINER ID        IMAGE                    COMMAND                  CREATED             STATUS                     PORTS               NAMES
       50813de995ff        docker-web-hello-world   "/usr/sbin/apache2 -…"   10 seconds ago      Exited (0) 3 seconds ago                       hello-world
-      ```
-Remove the container:
-      ```
+      
       $ docker rm hello-world
       ```
