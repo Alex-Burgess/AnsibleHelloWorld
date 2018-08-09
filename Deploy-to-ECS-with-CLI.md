@@ -1,5 +1,5 @@
 ## Preparation
-1. Check that the necessary IAM role exists:
+1. Check that the necessary IAM role exists. This will be created for you the first time using ECS.  So, in the most part it is only necessary to check if the default role (AWSServiceRoleForECS) exists.  
       ```
       $ aws iam get-role --role-name AWSServiceRoleForECS
       {
@@ -7,7 +7,7 @@
               "Path": "/aws-service-role/ecs.amazonaws.com/",
               "RoleName": "AWSServiceRoleForECS",
               "RoleId": "AROAIXAB6I7A56EI23DBY",
-              "Arn": "arn:aws:iam::369331073513:role/aws-service-role/ecs.amazonaws.com/AWSServiceRoleForECS",
+              "Arn": "arn:aws:iam::<redacted>:role/aws-service-role/ecs.amazonaws.com/AWSServiceRoleForECS",
               "CreateDate": "2018-07-30T16:45:37Z",
               "AssumeRolePolicyDocument": {
                   "Version": "2012-10-17",
@@ -24,8 +24,6 @@
           }
       }
       ```
-1. Create task execution role
-This will be created for you, if its the first time using ECS.  So, in the most part it is only necessary to check if the default role (AWSServiceRoleForECS) exists.  See [Create an IAM role](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/get-set-up-for-amazon-ecs.html#create-an-iam-role) for more information.
 1. Create a security group
 Create a basic security group allowing http traffic on port 80. See [Create a security group](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/get-set-up-for-amazon-ecs.html#create-a-base-security-group)
 
@@ -33,7 +31,7 @@ Create a basic security group allowing http traffic on port 80. See [Create a se
 ## Push Image to Repository
 Notes:
 * This is demonstrated with ECR, but DockerHub is also an option.
-* You can run this locally, but it makes sense to run this from an EC2 instance to improve upload time when pushing image to repository.
+* You can run the build process locally, but it makes sense to run this from an EC2 instance to improve upload time when pushing image to repository.
 
 
 1. Create ECR repository:
@@ -70,12 +68,12 @@ Notes:
       ```
       {
           "family": "web-hello-world-td",
-          "executionRoleArn": "arn:aws:iam::369331073513:role/ecsTaskExecutionRole",
+          "executionRoleArn": "arn:aws:iam::<redacted>:role/ecsTaskExecutionRole",
           "networkMode": "awsvpc",
           "containerDefinitions": [
               {
                   "name": "web-hello-world-cd",
-                  "image": "369331073513.dkr.ecr.eu-west-1.amazonaws.com/web-hello-world:latest",
+                  "image": "<redacted>.dkr.ecr.eu-west-1.amazonaws.com/web-hello-world:latest",
                   "cpu": 0,
                   "memoryReservation": 300,
                   "portMappings": [
