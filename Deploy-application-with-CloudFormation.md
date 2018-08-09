@@ -1,3 +1,9 @@
+Preparation steps:
+Checkout project
+Build image
+create ECR repository
+push image to ECR
+
 1. Validate templates locally:
       ```
       $ cd cloudformation-templates/
