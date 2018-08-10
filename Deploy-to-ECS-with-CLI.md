@@ -114,6 +114,14 @@ Notes:
 
 1. Check that the task status is Running and get key information, including Elastic Network Interface ID
       ```
+      $ aws ecs list-tasks --cluster docker-web-hw-cluster
+      {
+          "taskArns": [
+              "arn:aws:ecs:eu-west-1:<redacted>:task/6ed8e22e-7ad6-425b-af8c-9844d384710f"
+          ]
+      }
+
+
       $ aws ecs describe-tasks --cluster docker-web-hw-cluster --tasks 6ed8e22e-7ad6-425b-af8c-9844d384710f --query 'tasks[*].{clusterArn:clusterArn,taskArn:taskArn,taskDefinitionArn:taskDefinitionArn,Status:lastStatus,ENI:attachments[].details[?name==`networkInterfaceId`].value}'
       ```
 1. Get the public IP of the container
