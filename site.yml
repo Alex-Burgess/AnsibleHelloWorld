@@ -1,7 +1,8 @@
 ---
 - hosts: webservers
+  sudo: yes
   tasks:
   - name: Install Apache
-    yum: name=http state=present
+    yum: name=httpd state=present
   - name: Start Apache
     service: name=httpd state=started

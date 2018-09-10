@@ -7,5 +7,19 @@ For reasons of speed and ease, AWS was used to create environments to test the s
 
 
 ## Useful commands
-scp -r AnsibleHelloWorld/ ec2-user@ec2-52-18-140-127.eu-west-1.compute.amazonaws.com:~/
-ansible webservers -m ping --private-key ~/.ssh/ansible_key
+Copy ansible files from local machine to controller:
+$ scp -r AnsibleHelloWorld/ ec2-user@ec2-52-18-140-127.eu-west-1.compute.amazonaws.com:~/
+
+Add key:
+$ ssh-agent bash
+$ ssh-add ~/.ssh/ansible_key
+
+Basic test of configured servers:
+$ cd AnsibleHelloWorld
+$ ansible webservers -m ping
+
+Run site.yml playbook to create apache instance:
+$ ansible-playbook -i inventories/testing/IT_hosts site.yml
+http://ec2-34-249-100-148.eu-west-1.compute.amazonaws.com
+
+Useful
