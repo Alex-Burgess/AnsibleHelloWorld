@@ -6,3 +6,12 @@
     yum: name=httpd state=present
   - name: Start Apache
     service: name=httpd state=started
+  - name: Change ownership of html root directory
+    file: dest=/var/www/html owner=root group=ec2-user mode=0775 recurse=yes
+  - name: Copy Web content
+    copy:
+      src: html/index.html
+      dest: /var/www/html/
+      owner: ec2-user
+      group: ec2-user
+      mode: 0644
