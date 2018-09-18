@@ -3,3 +3,5 @@
   tasks:
   - name: Get uptime
     command: uptime
+    register: uptime_output
+  - debug: msg="{{ uptime_output.stdout }}"

@@ -23,5 +23,3 @@ $ ansible-playbook -i inventories/testing/IT_hosts site.yml
 
 Test the httpd installation:
 http://ec2-34-249-100-148.eu-west-1.compute.amazonaws.com
-
-Useful
