@@ -23,3 +23,17 @@ $ ansible-playbook -i inventories/testing/IT_hosts site.yml
 
 Test the httpd installation:
 http://ec2-34-249-100-148.eu-west-1.compute.amazonaws.com
+
+## Cloudformation Stack
+1. Upload CloudCormation template to repo bucket (replace bucket with own bucket):
+      ```
+      $ cd AnsibleHelloWorld/cloudformation
+      $ aws s3 cp . s3://alex-demo-files/cf-templates/ansible-hello-world/ --recursive --include “*.template”
+      ```
+1. Create stack:
+      ```
+      $ aws cloudformation create-stack \
+       --stack-name ansiblehelloworld \
+       --template-url https://s3.amazonaws.com/alex-demo-files/cf-templates/ansible-hello-world/main.template \
+       --parameters file://full_stack_params.json
+      ```

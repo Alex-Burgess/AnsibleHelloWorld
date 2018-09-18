@@ -1,0 +1,41 @@
+{
+   "AWSTemplateFormatVersion": "2010-09-09",
+   "Description": "Creates the full stack for the Ansible POC demonstration",
+   "Parameters": {
+      "AppName" : {
+          "Type" : "String",
+          "Description" : "Enter the name for the application",
+          "MinLength": 1,
+          "MaxLength": 64,
+          "AllowedPattern": "[a-zA-Z][a-zA-Z0-9-]*",
+          "ConstraintDescription": "AppName must begin with a letter and contain alphanumeric characters, or a hyphen."
+      },
+      "VpcCidrBlock": {
+         "Type": "String",
+         "AllowedPattern": "((\\d{1,3})\\.){3}\\d{1,3}/\\d{1,2}",
+         "Default": "10.0.0.0/16",
+         "Description": "VPC CIDR Block (eg 10.0.0.0/16)"
+      },
+   },
+   "Resources": {
+      "VPCStack": {
+         "Type": "AWS::CloudFormation::Stack",
+         "Properties": {
+            "Parameters": {
+               "AppName": { "Ref": "AppName" },
+               "VpcCidrBlock": { "Ref": "VpcCidrBlock"}
+            },
+            "TemplateURL": "https://s3.amazonaws.com/alex-demo-files/cf-templates/ansible-hello-world/vpc.template",
+            "TimeoutInMinutes": 5
+        }
+      },
+   },
+   "Outputs" : {
+      "VpcId" : {
+         "Description" : "VPC ID",
+         "Value": {
+            "Fn::GetAtt" : ["VPCStack", "Outputs.VpcId"]
+         }
+      }
+   }
+}
