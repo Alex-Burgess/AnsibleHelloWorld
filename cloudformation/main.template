@@ -27,8 +27,31 @@
             },
             "TemplateURL": "https://s3.amazonaws.com/alex-demo-files/cf-templates/ansible-hello-world/vpc.template",
             "TimeoutInMinutes": 5
-        }
+         }
       },
+      "SGStack": {
+         "Type": "AWS::CloudFormation::Stack",
+         "Properties": {
+            "Parameters": {
+               "AppName": { "Ref": "AppName" },
+               "VpcID": { "Fn::GetAtt" : ["VPCStack", "Outputs.VpcId"] }
+            },
+            "TemplateURL": "https://s3.amazonaws.com/alex-demo-files/cf-templates/ansible-hello-world/security-groups.template",
+            "TimeoutInMinutes": 5
+         }
+      },
+      "AnsibleControllerStack": {
+         "Type": "AWS::CloudFormation::Stack",
+         "Properties": {
+            "Parameters": {
+               "AppName": { "Ref": "AppName" },
+               "SubnetIDs": { "Fn::GetAtt" : ["VPCStack", "Outputs.SubnetIds"] },
+               "SecurityGroupIDs": { "Fn::GetAtt" : ["SGStack", "Outputs.BaseSG"] },
+            },
+            "TemplateURL": "https://s3.amazonaws.com/alex-demo-files/cf-templates/ansible-hello-world/ansible_controllers.template",
+            "TimeoutInMinutes": 5
+         }
+      }
    },
    "Outputs" : {
       "VpcId" : {

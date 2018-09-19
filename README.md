@@ -37,3 +37,10 @@ http://ec2-34-249-100-148.eu-west-1.compute.amazonaws.com
        --template-url https://s3.amazonaws.com/alex-demo-files/cf-templates/ansible-hello-world/main.template \
        --parameters file://full_stack_params.json
       ```
+1. Update stack:
+      ```
+      $ aws cloudformation update-stack \
+       --stack-name ansiblehelloworld \
+       --template-url https://s3.amazonaws.com/alex-demo-files/cf-templates/ansible-hello-world/main.template \
+       --parameters file://full_stack_params.json
+      ```      

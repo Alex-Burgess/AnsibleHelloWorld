@@ -1,0 +1,93 @@
+{
+   "AWSTemplateFormatVersion": "2010-09-09",
+   "Description": "",
+   "Parameters": {
+      "AppName" : {
+          "Type" : "String",
+          "Description" : "Enter the name for the application",
+          "MinLength": 1,
+          "MaxLength": 64,
+          "AllowedPattern": "[a-zA-Z][a-zA-Z0-9-]*",
+          "ConstraintDescription": "AppName must begin with a letter and contain alphanumeric characters, or a hyphen."
+      },
+      "VpcID": {
+         "Type" : "AWS::EC2::VPC::Id",
+         "Description" : "VPC ID"
+      }
+   },
+   "Resources": {
+      "BaseSG" : {
+         "Type" : "AWS::EC2::SecurityGroup",
+         "Properties" : {
+            "GroupDescription" : "Allow traffic between all instances with this group. Allow ssh to instances.",
+            "VpcId" : { "Ref" : "VpcID" },
+            "Tags": [
+               {
+                  "Key" : "Name",
+                  "Value" : { "Fn::Sub": [ "${app}-base-sg", { "app": {"Ref" : "AppName" }} ] }
+               },
+               {
+                  "Key" : "Application",
+                  "Value" : { "Fn::Sub": [ "${app}", { "app": {"Ref" : "AppName" }} ] }
+               },
+            ]
+         },
+      },
+      "SGBaseIngress": {
+         "Type": "AWS::EC2::SecurityGroupIngress",
+         "Properties": {
+            "GroupId": { "Ref": "BaseSG" },
+             "IpProtocol" : "tcp",
+             "FromPort": 0,
+             "ToPort": 65535,
+             "SourceSecurityGroupId": { "Ref": "BaseSG" }
+         }
+      },
+      "SGBaseSSHIngress": {
+         "Type": "AWS::EC2::SecurityGroupIngress",
+         "Properties": {
+            "GroupId": { "Ref": "BaseSG" },
+            "IpProtocol" : "tcp",
+            "FromPort": 22,
+            "ToPort": 22,
+            "CidrIp" : "0.0.0.0/0",
+         }
+      },
+      "WebserverHttpSG" : {
+         "Type" : "AWS::EC2::SecurityGroup",
+         "Properties" : {
+            "GroupDescription" : "Allow http to webservers",
+            "VpcId" : { "Ref" : "VpcID" },
+            "SecurityGroupIngress" : [{
+                  "IpProtocol" : "tcp",
+                  "FromPort" : 80,
+                  "ToPort" : 80,
+                  "CidrIp" : "0.0.0.0/0"
+               }
+            ],
+            "Tags": [
+               {
+                  "Key" : "Name",
+                  "Value" : { "Fn::Sub": [ "${app}-webserver-sg", { "app": {"Ref" : "AppName" }} ] }
+               },
+               {
+                  "Key" : "Application",
+                  "Value" : { "Fn::Sub": [ "${app}", { "app": {"Ref" : "AppName" }} ] }
+               },
+            ]
+         }
+      }
+   },
+   "Outputs" : {
+      "BaseSG" : {
+         "Description" : "Base Securiy Group ID",
+         "Value" : { "Ref" : "BaseSG" },
+         "Export" : { "Name" : "BaseSG" }
+      },
+      "WebserverHttpSG" : {
+         "Description" : "Webserver Securiy Group ID",
+         "Value" : { "Ref" : "WebserverHttpSG" },
+         "Export" : { "Name" : "WebserverHttpSG" }
+      },
+   }
+}
