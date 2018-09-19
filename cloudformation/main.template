@@ -16,6 +16,16 @@
          "Default": "10.0.0.0/16",
          "Description": "VPC CIDR Block (eg 10.0.0.0/16)"
       },
+      "InstanceTypeParameter" : {
+        "Type" : "String",
+        "Default" : "t3.nano",
+        "AllowedValues" : ["t3.nano", "t3.micro", "t3.small"],
+        "Description" : "Enter t3.nano, t3.micro, or t3.small. Default is t3.nano."
+     },
+      "ImageID": {
+         "Type" : "AWS::EC2::Image::Id",
+         "Description" : "Enter AMI for instance"
+      }
    },
    "Resources": {
       "VPCStack": {
@@ -47,6 +57,8 @@
                "AppName": { "Ref": "AppName" },
                "SubnetIDs": { "Fn::GetAtt" : ["VPCStack", "Outputs.SubnetIds"] },
                "SecurityGroupIDs": { "Fn::GetAtt" : ["SGStack", "Outputs.BaseSG"] },
+               "InstanceTypeParameter": { "Ref": "InstanceTypeParameter"},
+               "ImageID": {"Ref" : "ImageID"}
             },
             "TemplateURL": "https://s3.amazonaws.com/alex-demo-files/cf-templates/ansible-hello-world/ansible_controllers.template",
             "TimeoutInMinutes": 5

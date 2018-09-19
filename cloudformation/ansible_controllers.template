@@ -17,6 +17,16 @@
       "SecurityGroupIDs": {
          "Type" : "List<AWS::EC2::SecurityGroup::Id>",
          "Description" : "List of Security Group IDs"
+      },
+      "InstanceTypeParameter" : {
+        "Type" : "String",
+        "Default" : "t3.nano",
+        "AllowedValues" : ["t3.nano", "t3.micro", "t3.small"],
+        "Description" : "Enter t3.nano, t3.micro, or t3.small. Default is t3.nano."
+     },
+      "ImageID": {
+         "Type" : "AWS::EC2::Image::Id",
+         "Description" : "Enter AMI for instance"
       }
    },
    "Resources": {
@@ -24,8 +34,8 @@
          "Type": "AWS::EC2::Instance",
          "Properties": {
             "KeyName": "AlexMain",
-            "ImageId": "ami-0bdb1d6c15a40392c",
-            "InstanceType": "t2.micro",
+            "ImageId": { "Ref" : "ImageID" },
+            "InstanceType": { "Ref" : "InstanceTypeParameter" },
             "SubnetId": { "Fn::Select" : [ "0", {"Ref" : "SubnetIDs"} ] },
             "SecurityGroupIds" : {"Ref": "SecurityGroupIDs"},
             "Monitoring": false,
@@ -45,8 +55,8 @@
          "Type": "AWS::EC2::Instance",
          "Properties": {
             "KeyName": "AlexMain",
-            "ImageId": "ami-0bdb1d6c15a40392c",
-            "InstanceType": "t2.micro",
+            "ImageId": { "Ref" : "ImageID" },
+            "InstanceType": { "Ref" : "InstanceTypeParameter" },
             "SubnetId": { "Fn::Select" : [ "1", {"Ref" : "SubnetIDs"} ] },
             "SecurityGroupIds" : {"Ref": "SecurityGroupIDs"},
             "Monitoring": false,

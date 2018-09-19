@@ -6,5 +6,13 @@
    {
       "ParameterKey": "VpcCidrBlock",
       "ParameterValue": "10.0.0.0/16"
+   },
+   {
+      "ParameterKey": "InstanceTypeParameter",
+      "ParameterValue": "t3.nano"
+   },
+   {
+      "ParameterKey": "ImageID",
+      "ParameterValue": "ami-0bdb1d6c15a40392c"
    }
 ]
