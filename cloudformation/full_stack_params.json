@@ -14,5 +14,9 @@
    {
       "ParameterKey": "ImageID",
       "ParameterValue": "ami-0bdb1d6c15a40392c"
+   },
+   {
+      "ParameterKey": "SpotServiceLinkedRoleName",
+      "ParameterValue": "aws-ec2-spot-fleet-tagging-role"
    }
 ]

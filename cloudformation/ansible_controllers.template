@@ -23,13 +23,46 @@
         "Default" : "t3.nano",
         "AllowedValues" : ["t3.nano", "t3.micro", "t3.small"],
         "Description" : "Enter t3.nano, t3.micro, or t3.small. Default is t3.nano."
-     },
+      },
       "ImageID": {
          "Type" : "AWS::EC2::Image::Id",
          "Description" : "Enter AMI for instance"
+      },
+      "SpotServiceLinkedRoleName" : {
+          "Type" : "String",
+          "Default" : "AWSServiceRoleForEC2Spot",
+          "Description" : "Enter the spot ec2 service linked role name. e.g. AWSServiceRoleForEC2Spot",
       }
    },
    "Resources": {
+      "SpotFleet": {
+        "Type": "AWS::EC2::SpotFleet",
+        "Properties": {
+          "SpotFleetRequestConfigData": {
+            "IamFleetRole":
+               {
+                  "Fn::Sub": [ "arn:aws:iam::${acc}:role/${rolename}", { "acc": {"Ref" : "AWS::AccountId" }, "rolename": {"Ref" : "SpotServiceLinkedRoleName" }} ]
+               },
+            "TargetCapacity": 2,
+            "LaunchSpecifications": [
+            {
+               "InstanceType": { "Ref" : "InstanceTypeParameter" },
+               "ImageId": { "Ref" : "ImageID" },
+               "KeyName": "AlexMain",
+               "SubnetId": { "Fn::Select" : [ "0", {"Ref" : "SubnetIDs"} ] },
+               "WeightedCapacity": 8
+            },
+            {
+              "InstanceType": { "Ref" : "InstanceTypeParameter" },
+              "ImageId": { "Ref" : "ImageID" },
+              "KeyName": "AlexMain",
+              "SubnetId": { "Fn::Select" : [ "1", {"Ref" : "SubnetIDs"} ] },
+              "WeightedCapacity": 8
+            }
+            ]
+          }
+        }
+      },
       "AnsibleInstance1": {
          "Type": "AWS::EC2::Instance",
          "Properties": {
