@@ -50,18 +50,37 @@
             "TimeoutInMinutes": 5
          }
       },
-      "AnsibleControllerStack": {
+      "ProdAnsibleControllerStack": {
          "Type": "AWS::CloudFormation::Stack",
          "Properties": {
+            "TemplateURL": "https://s3.amazonaws.com/alex-demo-files/cf-templates/ansible-hello-world/ansible_controllers.template",
+            "TimeoutInMinutes": 5,
             "Parameters": {
                "AppName": { "Ref": "AppName" },
+               "Environment": "prod",
                "SubnetIDs": { "Fn::GetAtt" : ["VPCStack", "Outputs.SubnetIds"] },
                "SecurityGroupIDs": { "Fn::GetAtt" : ["SGStack", "Outputs.BaseSG"] },
                "InstanceTypeParameter": { "Ref": "InstanceTypeParameter"},
                "ImageID": {"Ref" : "ImageID"}
-            },
-            "TemplateURL": "https://s3.amazonaws.com/alex-demo-files/cf-templates/ansible-hello-world/ansible_controllers.template",
-            "TimeoutInMinutes": 5
+            }
+         }
+      },
+      "ProdWebserverStack": {
+         "Type": "AWS::CloudFormation::Stack",
+         "Properties": {
+            "TemplateURL": "https://s3.amazonaws.com/alex-demo-files/cf-templates/ansible-hello-world/webservers.template",
+            "TimeoutInMinutes": 5,
+            "Parameters": {
+               "AppName": { "Ref": "AppName" },
+               "Environment": "prod",
+               "SubnetIDs": { "Fn::GetAtt" : ["VPCStack", "Outputs.SubnetIds"] },
+               "SecurityGroupIDs": { "Fn::Join" : [",", [
+                  {"Fn::GetAtt" : ["SGStack", "Outputs.BaseSG"]},
+                  {"Fn::GetAtt" : ["SGStack", "Outputs.WebserverHttpSG"]}
+               ]]},
+               "InstanceTypeParameter": { "Ref": "InstanceTypeParameter"},
+               "ImageID": {"Ref" : "ImageID"}
+            }
          }
       }
    },

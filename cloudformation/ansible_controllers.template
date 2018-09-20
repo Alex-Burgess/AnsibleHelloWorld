@@ -1,6 +1,6 @@
 {
    "AWSTemplateFormatVersion": "2010-09-09",
-   "Description": "Creates Ansible Controller Instance",
+   "Description": "Creates Ansible Controller Instances",
    "Parameters": {
       "AppName" : {
           "Type" : "String",
@@ -9,6 +9,13 @@
           "MaxLength": 64,
           "AllowedPattern": "[a-zA-Z][a-zA-Z0-9-]*",
           "ConstraintDescription": "AppName must begin with a letter and contain alphanumeric characters, or a hyphen."
+      },
+      "Environment": {
+          "Type" : "String",
+          "AllowedValues" : ["prod", "uat", "dev", "test"],
+          "Default" : "test",
+          "Description" : "Enter the environment",
+          "ConstraintDescription" : "Environment must be one of prod, uat, dev, or test"
       },
       "SubnetIDs": {
          "Type" : "List<AWS::EC2::Subnet::Id>",
@@ -40,15 +47,10 @@
             "SecurityGroupIds" : {"Ref": "SecurityGroupIDs"},
             "Monitoring": false,
             "Tags": [
-               {
-                  "Key" : "Name",
-                  "Value" : { "Fn::Sub": [ "${app}-AnsibleController", { "app": {"Ref" : "AppName" }} ] }
-               },
-               {
-                  "Key" : "Application",
-                  "Value" : { "Fn::Sub": [ "${app}", { "app": {"Ref" : "AppName" }} ] }
-               },
-            ],
+               { "Key" : "Name", "Value" : "AnsibleController" },
+               { "Key" : "Application", "Value" : {"Ref" : "AppName" } },
+               { "Key" : "Environment", "Value" : { "Ref" : "Environment" } }
+            ]
          }
       },
       "AnsibleInstance2": {
@@ -61,15 +63,10 @@
             "SecurityGroupIds" : {"Ref": "SecurityGroupIDs"},
             "Monitoring": false,
             "Tags": [
-               {
-                  "Key" : "Name",
-                  "Value" : { "Fn::Sub": [ "${app}-AnsibleController", { "app": {"Ref" : "AppName" }} ] }
-               },
-               {
-                  "Key" : "Application",
-                  "Value" : { "Fn::Sub": [ "${app}", { "app": {"Ref" : "AppName" }} ] }
-               },
-            ],
+               { "Key" : "Name", "Value" : "AnsibleController" },
+               { "Key" : "Application", "Value" : {"Ref" : "AppName" } },
+               { "Key" : "Environment", "Value" : { "Ref" : "Environment" } }
+            ]
          }
       }
    }
