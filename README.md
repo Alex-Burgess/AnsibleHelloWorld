@@ -12,7 +12,7 @@ $ scp -r AnsibleHelloWorld/[!.]* ec2-user@ec2-52-18-140-127.eu-west-1.compute.am
 
 Add key:
 $ ssh-agent bash
-$ ssh-add ~/.ssh/ansible_key
+$ ssh-add ~/.ssh/ansible
 
 Basic test of configured servers:
 $ cd AnsibleHelloWorld
@@ -35,12 +35,12 @@ http://ec2-34-249-100-148.eu-west-1.compute.amazonaws.com
       $ aws cloudformation create-stack \
        --stack-name ansiblehelloworld \
        --template-url https://s3.amazonaws.com/alex-demo-files/cf-templates/ansible-hello-world/main.template \
-       --parameters file://full_stack_params.json
+       --parameters file://main_params.json
       ```
 1. Update stack:
       ```
       $ aws cloudformation update-stack \
        --stack-name ansiblehelloworld \
        --template-url https://s3.amazonaws.com/alex-demo-files/cf-templates/ansible-hello-world/main.template \
-       --parameters file://full_stack_params.json
+       --parameters file://main_params.json
       ```      
