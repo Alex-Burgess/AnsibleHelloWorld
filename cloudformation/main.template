@@ -21,8 +21,12 @@
         "Default" : "t3.nano",
         "AllowedValues" : ["t3.nano", "t3.micro", "t3.small"],
         "Description" : "Enter t3.nano, t3.micro, or t3.small. Default is t3.nano."
-     },
-      "ImageID": {
+      },
+      "ControllerImageID": {
+         "Type" : "AWS::EC2::Image::Id",
+         "Description" : "Enter AMI for instance"
+      },
+      "WebserverImageID": {
          "Type" : "AWS::EC2::Image::Id",
          "Description" : "Enter AMI for instance"
       }
@@ -61,7 +65,7 @@
                "SubnetIDs": { "Fn::GetAtt" : ["VPCStack", "Outputs.SubnetIds"] },
                "SecurityGroupIDs": { "Fn::GetAtt" : ["SGStack", "Outputs.BaseSG"] },
                "InstanceTypeParameter": { "Ref": "InstanceTypeParameter"},
-               "ImageID": {"Ref" : "ImageID"}
+               "ImageID": { "Ref" : "ControllerImageID"}
             }
          }
       },
@@ -79,7 +83,7 @@
                   {"Fn::GetAtt" : ["SGStack", "Outputs.WebserverHttpSG"]}
                ]]},
                "InstanceTypeParameter": { "Ref": "InstanceTypeParameter"},
-               "ImageID": {"Ref" : "ImageID"}
+               "ImageID": { "Ref" : "WebserverImageID"}
             }
          }
       }

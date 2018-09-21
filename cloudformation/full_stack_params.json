@@ -12,7 +12,11 @@
       "ParameterValue": "t3.nano"
    },
    {
-      "ParameterKey": "ImageID",
-      "ParameterValue": "ami-0bdb1d6c15a40392c"
+      "ParameterKey": "ControllerImageID",
+      "ParameterValue": "ami-06d39984bf862442b"
+   },
+   {
+      "ParameterKey": "WebserverImageID",
+      "ParameterValue": "ami-032f6cbddba6cd140"
    }
 ]
