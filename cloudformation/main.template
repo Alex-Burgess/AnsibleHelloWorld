@@ -19,8 +19,8 @@
       "InstanceTypeParameter" : {
         "Type" : "String",
         "Default" : "t3.nano",
-        "AllowedValues" : ["t3.nano", "t3.micro", "t3.small"],
-        "Description" : "Enter t3.nano, t3.micro, or t3.small. Default is t3.nano."
+        "AllowedValues" : ["t3.nano", "t3.micro", "t3.small", "t2.nano", "t2.micro", "t2.small"],
+        "Description" : "Enter t3.nano, t3.micro, t3.small, t2.nano, t2.micro, or t2.small. Default is t3.nano."
       },
       "ControllerImageID": {
          "Type" : "AWS::EC2::Image::Id",
@@ -86,6 +86,72 @@
                "ImageID": { "Ref" : "WebserverImageID"}
             }
          }
+      },
+      "StagingAnsibleControllerStack": {
+         "Type": "AWS::CloudFormation::Stack",
+         "Properties": {
+            "TemplateURL": "https://s3.amazonaws.com/alex-demo-files/cf-templates/ansible-hello-world/ansible_controllers.template",
+            "TimeoutInMinutes": 5,
+            "Parameters": {
+               "AppName": { "Ref": "AppName" },
+               "Environment": "staging",
+               "SubnetIDs": { "Fn::GetAtt" : ["VPCStack", "Outputs.SubnetIds"] },
+               "SecurityGroupIDs": { "Fn::GetAtt" : ["SGStack", "Outputs.BaseSG"] },
+               "InstanceTypeParameter": { "Ref": "InstanceTypeParameter"},
+               "ImageID": { "Ref" : "ControllerImageID"}
+            }
+         }
+      },
+      "StagingWebserverStack": {
+         "Type": "AWS::CloudFormation::Stack",
+         "Properties": {
+            "TemplateURL": "https://s3.amazonaws.com/alex-demo-files/cf-templates/ansible-hello-world/webservers.template",
+            "TimeoutInMinutes": 5,
+            "Parameters": {
+               "AppName": { "Ref": "AppName" },
+               "Environment": "staging",
+               "SubnetIDs": { "Fn::GetAtt" : ["VPCStack", "Outputs.SubnetIds"] },
+               "SecurityGroupIDs": { "Fn::Join" : [",", [
+                  {"Fn::GetAtt" : ["SGStack", "Outputs.BaseSG"]},
+                  {"Fn::GetAtt" : ["SGStack", "Outputs.WebserverHttpSG"]}
+               ]]},
+               "InstanceTypeParameter": { "Ref": "InstanceTypeParameter"},
+               "ImageID": { "Ref" : "WebserverImageID"}
+            }
+         }
+      },
+      "TestAnsibleControllerStack": {
+         "Type": "AWS::CloudFormation::Stack",
+         "Properties": {
+            "TemplateURL": "https://s3.amazonaws.com/alex-demo-files/cf-templates/ansible-hello-world/ansible_controllers.template",
+            "TimeoutInMinutes": 5,
+            "Parameters": {
+               "AppName": { "Ref": "AppName" },
+               "Environment": "test",
+               "SubnetIDs": { "Fn::GetAtt" : ["VPCStack", "Outputs.SubnetIds"] },
+               "SecurityGroupIDs": { "Fn::GetAtt" : ["SGStack", "Outputs.BaseSG"] },
+               "InstanceTypeParameter": { "Ref": "InstanceTypeParameter"},
+               "ImageID": { "Ref" : "ControllerImageID"}
+            }
+         }
+      },
+      "TestWebserverStack": {
+         "Type": "AWS::CloudFormation::Stack",
+         "Properties": {
+            "TemplateURL": "https://s3.amazonaws.com/alex-demo-files/cf-templates/ansible-hello-world/webservers.template",
+            "TimeoutInMinutes": 5,
+            "Parameters": {
+               "AppName": { "Ref": "AppName" },
+               "Environment": "test",
+               "SubnetIDs": { "Fn::GetAtt" : ["VPCStack", "Outputs.SubnetIds"] },
+               "SecurityGroupIDs": { "Fn::Join" : [",", [
+                  {"Fn::GetAtt" : ["SGStack", "Outputs.BaseSG"]},
+                  {"Fn::GetAtt" : ["SGStack", "Outputs.WebserverHttpSG"]}
+               ]]},
+               "InstanceTypeParameter": { "Ref": "InstanceTypeParameter"},
+               "ImageID": { "Ref" : "WebserverImageID"}
+            }
+         }
       }
    },
    "Outputs" : {
@@ -93,6 +159,42 @@
          "Description" : "VPC ID",
          "Value": {
             "Fn::GetAtt" : ["VPCStack", "Outputs.VpcId"]
+         }
+      },
+      "ProdAnsibleControllerPrivateIPs" : {
+         "Description" : "Prod - Ansible Controller Private IPs",
+         "Value": {
+            "Fn::GetAtt" : ["ProdAnsibleControllerStack", "Outputs.PrivateIPs"]
+         }
+      },
+      "ProdAnsibleControllerPublicIPs" : {
+         "Description" : "Prod - Ansible Controller Public IPs",
+         "Value": {
+            "Fn::GetAtt" : ["ProdAnsibleControllerStack", "Outputs.PublicIPs"]
+         }
+      },
+      "StagingAnsibleControllerPrivateIPs" : {
+         "Description" : "Prod - Ansible Controller Private IPs",
+         "Value": {
+            "Fn::GetAtt" : ["StagingWebserverStack", "Outputs.PrivateIPs"]
+         }
+      },
+      "StagingAnsibleControllerPublicIPs" : {
+         "Description" : "Prod - Ansible Controller Public IPs",
+         "Value": {
+            "Fn::GetAtt" : ["StagingWebserverStack", "Outputs.PublicIPs"]
+         }
+      },
+      "TestAnsibleControllerPrivateIPs" : {
+         "Description" : "Prod - Ansible Controller Private IPs",
+         "Value": {
+            "Fn::GetAtt" : ["TestWebserverStack", "Outputs.PrivateIPs"]
+         }
+      },
+      "TestAnsibleControllerPublicIPs" : {
+         "Description" : "Prod - Ansible Controller Public IPs",
+         "Value": {
+            "Fn::GetAtt" : ["TestWebserverStack", "Outputs.PublicIPs"]
          }
       }
    }

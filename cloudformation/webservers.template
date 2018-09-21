@@ -12,7 +12,7 @@
       },
       "Environment": {
           "Type" : "String",
-          "AllowedValues" : ["prod", "uat", "dev", "test"],
+          "AllowedValues" : ["prod", "staging", "test"],
           "Default" : "test",
           "Description" : "Enter the environment",
           "ConstraintDescription" : "Environment must be one of prod, uat, dev, or test"
@@ -28,8 +28,8 @@
       "InstanceTypeParameter" : {
         "Type" : "String",
         "Default" : "t3.nano",
-        "AllowedValues" : ["t3.nano", "t3.micro", "t3.small"],
-        "Description" : "Enter t3.nano, t3.micro, or t3.small. Default is t3.nano."
+        "AllowedValues" : ["t3.nano", "t3.micro", "t3.small", "t2.nano", "t2.micro", "t2.small"],
+        "Description" : "Enter t3.nano, t3.micro, t3.small, t2.nano, t2.micro, or t2.small. Default is t3.nano."
      },
       "ImageID": {
          "Type" : "AWS::EC2::Image::Id",
@@ -68,6 +68,22 @@
                { "Key" : "Environment", "Value" : { "Ref" : "Environment" } }
             ]
          }
+      }
+   },
+   "Outputs" : {
+      "PrivateIPs" : {
+         "Description" : "Private IPs of webserver instances",
+         "Value" : { "Fn::Join" : [ ",", [
+            { "Fn::GetAtt" : ["WebserverInstance1", "PrivateIp"] },
+            { "Fn::GetAtt" : ["WebserverInstance2", "PrivateIp"] }
+         ] ] }
+      },
+      "PublicIPs" : {
+         "Description" : "Public IPs of webserver instances",
+         "Value" : { "Fn::Join" : [ ",", [
+            { "Fn::GetAtt" : ["WebserverInstance1", "PublicIp"] },
+            { "Fn::GetAtt" : ["WebserverInstance2", "PublicIp"] }
+         ] ] }
       }
    }
 }

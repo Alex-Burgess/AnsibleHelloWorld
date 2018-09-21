@@ -81,13 +81,11 @@
    "Outputs" : {
       "BaseSG" : {
          "Description" : "Base Securiy Group ID",
-         "Value" : { "Ref" : "BaseSG" },
-         "Export" : { "Name" : "BaseSG" }
+         "Value" : { "Ref" : "BaseSG" }
       },
       "WebserverHttpSG" : {
          "Description" : "Webserver Securiy Group ID",
-         "Value" : { "Ref" : "WebserverHttpSG" },
-         "Export" : { "Name" : "WebserverHttpSG" }
+         "Value" : { "Ref" : "WebserverHttpSG" }
       },
    }
 }
