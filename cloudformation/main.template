@@ -157,45 +157,43 @@
    "Outputs" : {
       "VpcId" : {
          "Description" : "VPC ID",
-         "Value": {
-            "Fn::GetAtt" : ["VPCStack", "Outputs.VpcId"]
-         }
-      },
-      "ProdAnsibleControllerPrivateIPs" : {
-         "Description" : "Prod - Ansible Controller Private IPs",
-         "Value": {
-            "Fn::GetAtt" : ["ProdAnsibleControllerStack", "Outputs.PrivateIPs"]
-         }
+         "Value": { "Fn::GetAtt" : ["VPCStack", "Outputs.VpcId"]}
       },
       "ProdAnsibleControllerPublicIPs" : {
          "Description" : "Prod - Ansible Controller Public IPs",
-         "Value": {
-            "Fn::GetAtt" : ["ProdAnsibleControllerStack", "Outputs.PublicIPs"]
-         }
+         "Value": { "Fn::GetAtt" : ["ProdAnsibleControllerStack", "Outputs.PublicIPs"] }
       },
-      "StagingAnsibleControllerPrivateIPs" : {
-         "Description" : "Prod - Ansible Controller Private IPs",
-         "Value": {
-            "Fn::GetAtt" : ["StagingWebserverStack", "Outputs.PrivateIPs"]
-         }
+      "ProdWebserverPrivateIPs" : {
+         "Description" : "Prod - Webserver Private IPs",
+         "Value": { "Fn::GetAtt" : ["ProdWebserverStack", "Outputs.PrivateIPs"] }
+      },
+      "ProdWebserverPublicIPs" : {
+         "Description" : "Prod - Webserver Public IPs",
+         "Value": { "Fn::GetAtt" : ["ProdWebserverStack", "Outputs.PublicIPs"] }
       },
       "StagingAnsibleControllerPublicIPs" : {
-         "Description" : "Prod - Ansible Controller Public IPs",
-         "Value": {
-            "Fn::GetAtt" : ["StagingWebserverStack", "Outputs.PublicIPs"]
-         }
+         "Description" : "Staging - Ansible Controller Public IPs",
+         "Value": { "Fn::GetAtt" : ["StagingAnsibleControllerStack", "Outputs.PublicIPs"] }
       },
-      "TestAnsibleControllerPrivateIPs" : {
-         "Description" : "Prod - Ansible Controller Private IPs",
-         "Value": {
-            "Fn::GetAtt" : ["TestWebserverStack", "Outputs.PrivateIPs"]
-         }
+      "StagingWebserverPrivateIPs" : {
+         "Description" : "Staging - Webserver Private IPs",
+         "Value": { "Fn::GetAtt" : ["StagingWebserverStack", "Outputs.PrivateIPs"] }
+      },
+      "StagingWebserverPublicIPs" : {
+         "Description" : "Staging - Webserver Public IPs",
+         "Value": { "Fn::GetAtt" : ["StagingWebserverStack", "Outputs.PublicIPs"] }
       },
       "TestAnsibleControllerPublicIPs" : {
-         "Description" : "Prod - Ansible Controller Public IPs",
-         "Value": {
-            "Fn::GetAtt" : ["TestWebserverStack", "Outputs.PublicIPs"]
-         }
+         "Description" : "Test - Ansible Controller Public IPs",
+         "Value": { "Fn::GetAtt" : ["TestAnsibleControllerStack", "Outputs.PublicIPs"] }
+      },
+      "TestWebserverPrivateIPs" : {
+         "Description" : "Test - Webserver Private IPs",
+         "Value": { "Fn::GetAtt" : ["TestWebserverStack", "Outputs.PrivateIPs"] }
+      },
+      "TestWebserverPublicIPs" : {
+         "Description" : "Test - Webserver Public IPs",
+         "Value": { "Fn::GetAtt" : ["TestWebserverStack", "Outputs.PublicIPs"] }
       }
    }
 }
