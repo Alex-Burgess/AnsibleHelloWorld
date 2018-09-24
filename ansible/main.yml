@@ -1,7 +1,6 @@
 ---
 - hosts: webservers
   tasks:
-  - name: Import webserver_config.yml here
-    xxx: webserver_config.yml
-  - name: Import webserver_content.yml here
-    xxx: webserver_content.yml
+  - import_tasks: webserver_install.yml
+#  - name: Import webserver_content.yml here
+#    xxx: webserver_content.yml
