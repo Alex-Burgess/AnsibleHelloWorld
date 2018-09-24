@@ -6,5 +6,5 @@
     yum: name=httpd state=present
 #  - name: Change ownership of html root directory
 #    file: dest=/var/www/html owner=apache group=apache mode=0777 recurse=yes
-  - name: Start Apache
-    service: name=httpd state=started
+#  - name: Start Apache
+#    service: name=httpd state=started

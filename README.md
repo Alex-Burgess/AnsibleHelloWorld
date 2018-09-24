@@ -100,3 +100,8 @@ $ scp -r ansiblehelloworld.com ec2-user@34.242.114.179:/app/applications/
 $ ansible-playbook -i inventories/testing/IT_hosts main.yml
 
 http://54.194.91.130/ansiblehelloworld.com/test_page2.html
+
+
+## How to run ansible command as another user:
+$ cd /app/ansible/AnsibleHelloWorld
+$ sudo -u ansible /home/ansible/.local/bin/ansible-playbook -i inventories/testing/IT_hosts main.yml
