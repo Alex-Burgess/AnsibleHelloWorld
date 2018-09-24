@@ -18,5 +18,13 @@
    {
       "ParameterKey": "WebserverImageID",
       "ParameterValue": "ami-032f6cbddba6cd140"
+   },
+   {
+      "ParameterKey": "BuildProd",
+      "ParameterValue": "false"
+   },
+   {
+      "ParameterKey": "BuildStaging",
+      "ParameterValue": "false"
    }
 ]
