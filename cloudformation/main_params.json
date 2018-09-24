@@ -9,7 +9,7 @@
    },
    {
       "ParameterKey": "InstanceTypeParameter",
-      "ParameterValue": "t2.micro"
+      "ParameterValue": "t3.nano"
    },
    {
       "ParameterKey": "ControllerImageID",
