@@ -92,3 +92,11 @@ Copy ansible files from local machine to controller:
       $ ssh-add ~/.ssh/ansible
       $ ansible-playbook -i inventories/testing/IT_hosts main.yml
       ```
+
+
+cd /Users/alexburgess/Development/AnsibleHelloWorld
+$ scp -r ansible/[!.]* ec2-user@34.242.114.179:/app/ansible/AnsibleHelloWorld
+$ scp -r ansiblehelloworld.com ec2-user@34.242.114.179:/app/applications/
+$ ansible-playbook -i inventories/testing/IT_hosts main.yml
+
+http://54.194.91.130/ansiblehelloworld.com/test_page2.html
