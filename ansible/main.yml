@@ -1,6 +1,3 @@
 ---
-- hosts: webservers
-  tasks:
-  - import_tasks: webserver_install.yml
-#  - name: Import webserver_content.yml here
-#    xxx: webserver_content.yml
+- import_playbook: webserver_install.yml
+- import_playbook: webserver_content.yml
