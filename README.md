@@ -84,8 +84,13 @@ Useful link: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/creating-an-ami
       ```
       $ aws ec2 describe-instances --query 'Reservations[*].Instances[*].{InstanceID:InstanceId,ImageId:ImageId,Tags:Tags,State:State}' --filter "Name=tag:Name,Values=AMI Work"
       ```
-1. Create instance:
+1. Create instance (For Ansible Controller):
       ```
       $ aws ec2 create-image --instance-id i-0fbada89239ed874c --name "ansiblecontroller-1.0.1" --description "Control instance AMI for Ansible Hello World application"
       $ aws ec2 create-tags --resources ami-0b64f24ce9389ca00 --tags Key=Name,Value=AnsibleController Key=Application,Value=AnsibleHelloWorld Key=Version,Value=1.0.1      
+      ```
+1. Create instance (For Webserver):
+      ```
+      $ aws ec2 create-image --instance-id i-0fbada89239ed874c --name "helloworldwebserver-1.0.1" --description "Webserver instance AMI for Ansible Hello World application"
+      $ aws ec2 create-tags --resources ami-08d996d906e9ad81a --tags Key=Name,Value=HelloWorldWebserver Key=Application,Value=AnsibleHelloWorld Key=Version,Value=1.0.1      
       ```

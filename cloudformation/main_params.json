@@ -17,7 +17,7 @@
    },
    {
       "ParameterKey": "WebserverImageID",
-      "ParameterValue": "ami-032f6cbddba6cd140"
+      "ParameterValue": "ami-08d996d906e9ad81a"
    },
    {
       "ParameterKey": "BuildProd",
