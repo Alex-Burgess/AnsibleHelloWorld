@@ -1,8 +1,15 @@
 ---
-- hosts: webservers
+- name: Configuration
+  hosts: webservers
   become: true
   tasks:
-  - name: Copy httpd.conf
-    copy:
-      src: /app/applications/helloworld.com/httpConfiguration/httpd/conf/httpd.conf
-      dest: /etc/httpd/conf/httpd.conf
+  #- name: Copy httpd.conf
+   # copy:
+   #   src: /app/applications/helloworld.com/httpConfiguration/httpd/conf/httpd.conf
+   #   dest: /etc/httpd/conf/httpd.conf
+  - name: Synchronize hellworld.com conf directory
+    synchronize:
+      src: /app/applications/helloworld.com/httpConfiguration/httpd/conf/
+      dest: /etc/httpd/conf/
+      delete: yes
+      recursive: yes

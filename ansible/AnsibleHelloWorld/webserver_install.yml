@@ -1,6 +1,6 @@
 ---
-- hosts: webservers
-  become: true
+- name: Installation
+  hosts: webservers
   tasks:
   - name: Install Apache
     yum: name=httpd state=present
