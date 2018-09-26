@@ -1,13 +1,13 @@
 ---
 - hosts: webservers
-  become: yes
+  become: true
+  become_user: apache
   tasks:
-  - name: Create application root Directory
-    file: path=/var/www/html/ansiblehelloworld.com/html state=directory
-  - name: Copy Web content
+  - name: Create html directory for hellworld.com
+    file: path=/var/www/html/helloworld.com/html state=directory
+  - name: Synchronize hellworld.com html content
     synchronize:
-      src: /app/applications/ansiblehelloworld.com/httpContent/html
-      dest: /var/www/html/ansiblehelloworld.com
+      src: /app/applications/helloworld.com/httpContent/html
+      dest: /var/www/html/helloworld.com
       delete: yes
       recursive: yes
-      # File ownership of directory from ansiblehellworld.com needs to be looked at.

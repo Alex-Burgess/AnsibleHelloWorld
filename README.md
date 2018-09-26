@@ -28,80 +28,64 @@ For reasons of speed and ease, AWS was used to create environments to test the s
       ```      
 
 ## Configure Ansible Tool Environment
-Update inventory file(s), e.g. IT_hosts, STAGING_hosts, etc.
-
-Copy ansible files from local machine to controller:
-1. Log onto Ansible controller:
-      ```
-      ssh ec2-user@<ip>
-
-      ```
-1. Switch to root:
-      ```
-      sudo su
-      ```
-1. Create Ansible app directory (Note file permissions are to allow ec2-user and ansible to both read and write to same directory.  better solution required.  This also causes problems down the line for cfg files not being used.):
-      ```
-      mkdir /app
-      mkdir /app/ansible
-      mkdir /app/ansible/AnsibleHelloWorld
-      chown -R ansible:ansible /app/ansible
-      chmod -R 777 /app/ansible
-      ```
-1. Copy files to Ansible controller:
+1. Update inventory file(s), e.g. IT_hosts, STAGING_hosts, etc.
+1. Copy Anisble files to Ansible controller:
       ```
       $ cd AnsibleHelloWorld
-      $ scp -r ansible/[!.]* ec2-user@<ip>:/app/ansible/AnsibleHelloWorld/
+      $ scp -r ansible/AnsibleHelloWorld ansible@34.248.61.181:/app/ansible/
       ```
-1. Make files available to Ansible user:
+1. Basic test of configured servers: (Note put key in ansible user on AC, so can ssh and scp as ansible user.)
       ```
-      chown -R ansible:ansible /app/ansible
-      chmod -R 777 /app/ansible
-      ```
-1. Basic test of configured servers:
-      ```
+      $ ssh ansible@<ip>
       $ sudo su - ansible
       $ ssh-agent bash
       $ ssh-add ~/.ssh/ansible
-      $ chmod 775 /app/ansible/AnsibleHelloWorld
       $ cd /app/ansible/AnsibleHelloWorld
       $ ansible webservers -m ping
+      ```
+1. Copy the webserver content to AC:
+      ```
+      $ scp -r helloworld.com ansible@34.248.61.181:/app/applications/
       ```
 1. Build webserver environment:
       ```
       $ ansible-playbook -i inventories/testing/IT_hosts main.yml
       ```
-1. Test the httpd installation: http://ec2-<ip>.eu-west-1.compute.amazonaws.com
-
-## First draft of content deployment via playbook:
-1. Create directory on Ansible Controller:
-      ```
-      $ mkdir /app/applications
-      $ mkdir /app/applications/ApplicationA
-      $ mkdir /app/applications/ApplicationA/httpContent
-      ```
-1. On local host:
-      ```
-      cd AnsibleHelloWorld
-      scp -r applicationA/httpContent/* ec2-user@34.242.114.179:/app/applications/ApplicationA/httpContent
-      ```
-1. Run playbook on Ansible Controller:
-      ```
-      $ sudo su - ansible
-      $ ssh-agent bash
-      $ ssh-add ~/.ssh/ansible
-      $ ansible-playbook -i inventories/testing/IT_hosts main.yml
-      ```
+1. Test the httpd installation:
+http://<ip>/ansiblehelloworld.com/test_page2.html
+or
+http://ec2-<ip>.eu-west-1.compute.amazonaws.com
 
 
-cd /Users/alexburgess/Development/AnsibleHelloWorld
-$ scp -r ansible/AnsibleHelloWorld ansible@34.248.61.181:/app/ansible/
-$ scp -r helloworld.com ansible@34.248.61.181:/app/applications/
-$ ansible-playbook -i inventories/testing/IT_hosts main.yml
-
-http://54.194.91.130/ansiblehelloworld.com/test_page2.html
-
-
-## How to run ansible command as another user:
+## How to run ansible command as another user:  (Useful for later)
 $ cd /app/ansible/AnsibleHelloWorld
 $ sudo -u ansible /home/ansible/.local/bin/ansible-playbook -i inventories/testing/IT_hosts main.yml
+
+## Helpful commands for creating an AMI:
+Useful link: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/creating-an-ami-ebs.html
+
+1. Create an instance using CLI:
+      ```
+      ```
+1. SSH to instance. Update packages and make customisations
+      ```
+      ssh ec2-user@<ip>
+      sudo yum install
+      ```
+1. Find the instance if necessary:
+      ```
+      $ aws ec2 describe-instances --query 'Reservations[*].Instances[*].{InstanceID:InstanceId,ImageId:ImageId,Tags:Tags}' --filter "Name=tag:Name,Values=AMI Work"
+      ```
+1. Stop instance:
+      ```
+      aws ec2 stop-instances --instance-ids i-0fbada89239ed874c
+      ```
+1. Check state:
+      ```
+      $ aws ec2 describe-instances --query 'Reservations[*].Instances[*].{InstanceID:InstanceId,ImageId:ImageId,Tags:Tags,State:State}' --filter "Name=tag:Name,Values=AMI Work"
+      ```
+1. Create instance:
+      ```
+      $ aws ec2 create-image --instance-id i-0fbada89239ed874c --name "ansiblecontroller-1.0.1" --description "Control instance AMI for Ansible Hello World application"
+      $ aws ec2 create-tags --resources ami-0b64f24ce9389ca00 --tags Key=Name,Value=AnsibleController Key=Application,Value=AnsibleHelloWorld Key=Version,Value=1.0.1      
+      ```

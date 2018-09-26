@@ -13,7 +13,7 @@
    },
    {
       "ParameterKey": "ControllerImageID",
-      "ParameterValue": "ami-06d39984bf862442b"
+      "ParameterValue": "ami-0b64f24ce9389ca00"
    },
    {
       "ParameterKey": "WebserverImageID",
