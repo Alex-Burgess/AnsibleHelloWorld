@@ -64,7 +64,7 @@ $ sudo -u ansible /home/ansible/.local/bin/ansible-playbook -i inventories/testi
 ## Helpful commands for creating an AMI:
 Useful link: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/creating-an-ami-ebs.html
 
-1. Create an instance using CLI:
+1. Launch an instance using CLI:
       ```
       ```
 1. SSH to instance. Update packages and make customisations

@@ -9,15 +9,21 @@
       dest: /etc/httpd/conf/
       delete: yes
       recursive: yes
+    register: conf_directory
   - name: Synchronize hellworld.com conf.d directory
     synchronize:
       src: /app/applications/helloworld.com/httpConfiguration/httpd/conf.d/
       dest: /etc/httpd/conf.d/
       delete: yes
       recursive: yes
+    register: confd_directory
   - name: Synchronize hellworld.com conf.modules.d directory
     synchronize:
       src: /app/applications/helloworld.com/httpConfiguration/httpd/conf.modules.d/
       dest: /etc/httpd/conf.modules.d/
       delete: yes
       recursive: yes
+    register: confmodules_directory
+  - name: Restart httpd instance if configuration updates were made
+    service: name=httpd state=restarted
+    when: conf_directory.changed or confd_directory or confmodules_directory

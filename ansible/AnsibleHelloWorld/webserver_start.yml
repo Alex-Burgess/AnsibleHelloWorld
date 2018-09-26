@@ -1,6 +1,0 @@
----
-- hosts: webservers
-  become: yes
-  tasks:
-  - name: Start Apache
-    service: name=httpd state=started
