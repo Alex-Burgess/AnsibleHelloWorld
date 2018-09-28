@@ -22,11 +22,19 @@
         "AllowedValues" : ["t3.nano", "t3.micro", "t3.small", "t2.nano", "t2.micro", "t2.small"],
         "Description" : "Enter t3.nano, t3.micro, t3.small, t2.nano, t2.micro, or t2.small. Default is t3.nano."
       },
-      "ControllerImageID": {
+      "TestControllerImageID": {
          "Type" : "AWS::EC2::Image::Id",
          "Description" : "Enter AMI for instance"
       },
-      "WebserverImageID": {
+      "TestWebserverImageID": {
+         "Type" : "AWS::EC2::Image::Id",
+         "Description" : "Enter AMI for instance"
+      },
+      "ProdControllerImageID": {
+         "Type" : "AWS::EC2::Image::Id",
+         "Description" : "Enter AMI for instance"
+      },
+      "ProdWebserverImageID": {
          "Type" : "AWS::EC2::Image::Id",
          "Description" : "Enter AMI for instance"
       },
@@ -98,7 +106,7 @@
                "SubnetIDs": { "Fn::GetAtt" : ["VPCStack", "Outputs.SubnetIds"] },
                "SecurityGroupIDs": { "Fn::GetAtt" : ["SGStack", "Outputs.BaseSG"] },
                "InstanceTypeParameter": { "Ref": "InstanceTypeParameter"},
-               "ImageID": { "Ref" : "ControllerImageID"}
+               "ImageID": { "Ref" : "ProdControllerImageID"}
             }
          }
       },
@@ -117,7 +125,7 @@
                   {"Fn::GetAtt" : ["SGStack", "Outputs.WebserverHttpSG"]}
                ]]},
                "InstanceTypeParameter": { "Ref": "InstanceTypeParameter"},
-               "ImageID": { "Ref" : "WebserverImageID"}
+               "ImageID": { "Ref" : "ProdWebserverImageID"}
             }
          }
       },
@@ -133,7 +141,7 @@
                "SubnetIDs": { "Fn::GetAtt" : ["VPCStack", "Outputs.SubnetIds"] },
                "SecurityGroupIDs": { "Fn::GetAtt" : ["SGStack", "Outputs.BaseSG"] },
                "InstanceTypeParameter": { "Ref": "InstanceTypeParameter"},
-               "ImageID": { "Ref" : "ControllerImageID"}
+               "ImageID": { "Ref" : "TestControllerImageID"}
             }
          }
       },
@@ -152,7 +160,7 @@
                   {"Fn::GetAtt" : ["SGStack", "Outputs.WebserverHttpSG"]}
                ]]},
                "InstanceTypeParameter": { "Ref": "InstanceTypeParameter"},
-               "ImageID": { "Ref" : "WebserverImageID"}
+               "ImageID": { "Ref" : "TestWebserverImageID"}
             }
          }
       },
@@ -168,7 +176,7 @@
                "SubnetIDs": { "Fn::GetAtt" : ["VPCStack", "Outputs.SubnetIds"] },
                "SecurityGroupIDs": { "Fn::GetAtt" : ["SGStack", "Outputs.BaseSG"] },
                "InstanceTypeParameter": { "Ref": "InstanceTypeParameter"},
-               "ImageID": { "Ref" : "ControllerImageID"}
+               "ImageID": { "Ref" : "TestControllerImageID"}
             }
          }
       },
@@ -187,7 +195,7 @@
                   {"Fn::GetAtt" : ["SGStack", "Outputs.WebserverHttpSG"]}
                ]]},
                "InstanceTypeParameter": { "Ref": "InstanceTypeParameter"},
-               "ImageID": { "Ref" : "WebserverImageID"}
+               "ImageID": { "Ref" : "TestWebserverImageID"}
             }
          }
       }

@@ -12,19 +12,27 @@
       "ParameterValue": "t3.nano"
    },
    {
-      "ParameterKey": "ControllerImageID",
+      "ParameterKey": "ProdControllerImageID",
+      "ParameterValue": "ami-0983e5ea8a1b18aaf"
+   },
+   {
+      "ParameterKey": "ProdWebserverImageID",
+      "ParameterValue": "ami-0c24287c9d311f58f"
+   },   
+   {
+      "ParameterKey": "TestControllerImageID",
       "ParameterValue": "ami-0b64f24ce9389ca00"
    },
    {
-      "ParameterKey": "WebserverImageID",
+      "ParameterKey": "TestWebserverImageID",
       "ParameterValue": "ami-08d996d906e9ad81a"
    },
    {
       "ParameterKey": "BuildProd",
-      "ParameterValue": "false"
+      "ParameterValue": "true"
    },
    {
       "ParameterKey": "BuildStaging",
-      "ParameterValue": "false"
+      "ParameterValue": "true"
    }
 ]
