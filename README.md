@@ -32,7 +32,7 @@ For reasons of speed and ease, AWS was used to create environments to test the s
 1. Copy Anisble files to Ansible controller:
       ```
       $ cd AnsibleHelloWorld
-      $ scp -r ansible/AnsibleHelloWorld ansible@34.248.61.181:/app/ansible/
+      $ scp -r ansible/AnsibleHelloWorld ansible@xx.xxx.xx.xxx:/app/ansible/
       ```
 1. Basic test of configured servers: (Note put key in ansible user on AC, so can ssh and scp as ansible user.)
       ```
@@ -45,7 +45,7 @@ For reasons of speed and ease, AWS was used to create environments to test the s
       ```
 1. Copy the webserver content to AC:
       ```
-      $ scp -r helloworld.com ansible@34.248.61.181:/app/applications/
+      $ scp -r helloworld.com ansible@xx.xxx.xx.xxx:/app/applications/
       ```
 1. Build webserver environment:
       ```
@@ -64,8 +64,9 @@ $ sudo -u ansible /home/ansible/.local/bin/ansible-playbook -i inventories/testi
 ## Helpful commands for creating an AMI:
 Useful link: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/creating-an-ami-ebs.html
 
-1. Launch an instance using CLI:
+1. Launch an instance using CLI (can be default VPC):
       ```
+      aws ec2 run-instances --image-id ami-xxxxxxxx --count 1 --instance-type t2.micro --key-name MyKeyPair --security-group-ids sg-xxxxxxxx --subnet-id subnet-xxxxxxxx
       ```
 1. SSH to instance. Update packages and make customisations
       ```
@@ -78,7 +79,7 @@ Useful link: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/creating-an-ami
       ```
 1. Stop instance:
       ```
-      aws ec2 stop-instances --instance-ids i-0fbada89239ed874c
+      aws ec2 stop-instances --instance-ids i-xxxxxxxxxxxxxxxxx
       ```
 1. Check state:
       ```
@@ -86,11 +87,15 @@ Useful link: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/creating-an-ami
       ```
 1. Create instance (For Ansible Controller):
       ```
-      $ aws ec2 create-image --instance-id i-0fbada89239ed874c --name "ansiblecontroller-1.0.1" --description "Control instance AMI for Ansible Hello World application"
-      $ aws ec2 create-tags --resources ami-0b64f24ce9389ca00 --tags Key=Name,Value=AnsibleController Key=Application,Value=AnsibleHelloWorld Key=Version,Value=1.0.1      
+      $ aws ec2 create-image --instance-id i-xxxxxxxxxxxxxxxxx --name "ansiblecontroller-1.0.1" --description "Control instance AMI for Ansible Hello World application"
+      $ aws ec2 create-tags --resources ami-xxxxxxxxxxxxxxxxx --tags Key=Name,Value=AnsibleController Key=Application,Value=AnsibleHelloWorld Key=Version,Value=1.0.1 Key=Environment,Value=Test
       ```
 1. Create instance (For Webserver):
       ```
-      $ aws ec2 create-image --instance-id i-0fbada89239ed874c --name "helloworldwebserver-1.0.1" --description "Webserver instance AMI for Ansible Hello World application"
-      $ aws ec2 create-tags --resources ami-08d996d906e9ad81a --tags Key=Name,Value=HelloWorldWebserver Key=Application,Value=AnsibleHelloWorld Key=Version,Value=1.0.1      
+      $ aws ec2 create-image --instance-id i-xxxxxxxxxxxxxxxxx --name "helloworldwebserver-1.0.1" --description "Webserver instance AMI for Ansible Hello World application"
+      $ aws ec2 create-tags --resources ami-xxxxxxxxxxxxxxxxx --tags Key=Name,Value=HelloWorldWebserver Key=Application,Value=AnsibleHelloWorld Key=Version,Value=1.0.1 Key=Environment,Value=Test
+      ```
+1. Cleaning up old AMIs:
+      ```
+      aws ec2 deregister-image --image-id
       ```
