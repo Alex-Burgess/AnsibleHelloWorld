@@ -1,6 +1,6 @@
 {
    "AWSTemplateFormatVersion": "2010-09-09",
-   "Description": "",
+   "Description": "Creates security groups for Ansible test stack",
    "Parameters": {
       "AppName" : {
           "Type" : "String",
