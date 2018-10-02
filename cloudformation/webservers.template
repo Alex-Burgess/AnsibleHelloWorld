@@ -48,9 +48,10 @@
             "IamInstanceProfile" : "ec2-describe-tags",
             "Monitoring": false,
             "Tags": [
-               { "Key" : "Name", "Value" : "Webserver" },
+               { "Key" : "Name", "Value" : "HelloWorldWebserver" },
                { "Key" : "Application", "Value" : {"Ref" : "AppName" } },
-               { "Key" : "Environment", "Value" : { "Ref" : "Environment" } }
+               { "Key" : "Environment", "Value" : { "Ref" : "Environment" } },
+               { "Key" : "Type", "Value" : "Webserver" }
             ]
          }
       },
@@ -65,9 +66,10 @@
             "IamInstanceProfile" : "ec2-describe-tags",
             "Monitoring": false,
             "Tags": [
-               { "Key" : "Name", "Value" : "Webserver" },
+               { "Key" : "Name", "Value" : "HelloWorldWebserver" },
                { "Key" : "Application", "Value" : {"Ref" : "AppName" } },
-               { "Key" : "Environment", "Value" : { "Ref" : "Environment" } }
+               { "Key" : "Environment", "Value" : { "Ref" : "Environment" } },
+               { "Key" : "Type", "Value" : "Webserver" }
             ]
          }
       }
