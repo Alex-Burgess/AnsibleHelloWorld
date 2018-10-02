@@ -45,6 +45,7 @@
             "InstanceType": { "Ref" : "InstanceTypeParameter" },
             "SubnetId": { "Fn::Select" : [ "0", {"Ref" : "SubnetIDs"} ] },
             "SecurityGroupIds" : {"Ref": "SecurityGroupIDs"},
+            "IamInstanceProfile" : "ec2-describe-tags",
             "Monitoring": false,
             "Tags": [
                { "Key" : "Name", "Value" : "Webserver" },
@@ -61,6 +62,7 @@
             "InstanceType": { "Ref" : "InstanceTypeParameter" },
             "SubnetId": { "Fn::Select" : [ "1", {"Ref" : "SubnetIDs"} ] },
             "SecurityGroupIds" : {"Ref": "SecurityGroupIDs"},
+            "IamInstanceProfile" : "ec2-describe-tags",
             "Monitoring": false,
             "Tags": [
                { "Key" : "Name", "Value" : "Webserver" },
