@@ -13,19 +13,19 @@
    },
    {
       "ParameterKey": "ProdControllerImageID",
-      "ParameterValue": "ami-0983e5ea8a1b18aaf"
+      "ParameterValue": "ami-027906b2084b3ce38"
    },
    {
       "ParameterKey": "ProdWebserverImageID",
-      "ParameterValue": "ami-0c24287c9d311f58f"
-   },   
+      "ParameterValue": "ami-06367ef4944e39a9b"
+   },
    {
       "ParameterKey": "TestControllerImageID",
-      "ParameterValue": "ami-0b64f24ce9389ca00"
+      "ParameterValue": "ami-06198ce2ab09874e7"
    },
    {
       "ParameterKey": "TestWebserverImageID",
-      "ParameterValue": "ami-08d996d906e9ad81a"
+      "ParameterValue": "ami-0ae0166798fcd48a7"
    },
    {
       "ParameterKey": "BuildProd",
