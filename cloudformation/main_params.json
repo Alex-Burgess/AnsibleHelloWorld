@@ -25,14 +25,14 @@
    },
    {
       "ParameterKey": "TestWebserverImageID",
-      "ParameterValue": "ami-0ae0166798fcd48a7"
+      "ParameterValue": "ami-0c5b4add3f9fbf712"
    },
    {
       "ParameterKey": "BuildProd",
-      "ParameterValue": "true"
+      "ParameterValue": "false"
    },
    {
       "ParameterKey": "BuildStaging",
-      "ParameterValue": "true"
+      "ParameterValue": "false"
    }
 ]
