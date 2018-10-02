@@ -94,6 +94,13 @@
             "TimeoutInMinutes": 5
          }
       },
+      "IAMStack": {
+         "Type": "AWS::CloudFormation::Stack",
+         "Properties": {
+            "TemplateURL": "https://s3.amazonaws.com/alex-demo-files/cf-templates/ansible-hello-world/iam.template",
+            "TimeoutInMinutes": 5
+         }
+      },
       "ProdAnsibleControllerStack": {
          "Type": "AWS::CloudFormation::Stack",
          "Condition" : "CreateProdResources",
@@ -106,7 +113,8 @@
                "SubnetIDs": { "Fn::GetAtt" : ["VPCStack", "Outputs.SubnetIds"] },
                "SecurityGroupIDs": { "Fn::GetAtt" : ["SGStack", "Outputs.BaseSG"] },
                "InstanceTypeParameter": { "Ref": "InstanceTypeParameter"},
-               "ImageID": { "Ref" : "ProdControllerImageID"}
+               "ImageID": { "Ref" : "ProdControllerImageID"},
+               "InstanceProfileName": { "Fn::GetAtt" : ["IAMStack", "Outputs.DescribeEC2TagsInstanceProfileName"] }
             }
          }
       },
@@ -125,7 +133,8 @@
                   {"Fn::GetAtt" : ["SGStack", "Outputs.WebserverHttpSG"]}
                ]]},
                "InstanceTypeParameter": { "Ref": "InstanceTypeParameter"},
-               "ImageID": { "Ref" : "ProdWebserverImageID"}
+               "ImageID": { "Ref" : "ProdWebserverImageID"},
+               "InstanceProfileName": { "Fn::GetAtt" : ["IAMStack", "Outputs.DescribeEC2TagsInstanceProfileName"] }
             }
          }
       },
@@ -141,7 +150,8 @@
                "SubnetIDs": { "Fn::GetAtt" : ["VPCStack", "Outputs.SubnetIds"] },
                "SecurityGroupIDs": { "Fn::GetAtt" : ["SGStack", "Outputs.BaseSG"] },
                "InstanceTypeParameter": { "Ref": "InstanceTypeParameter"},
-               "ImageID": { "Ref" : "TestControllerImageID"}
+               "ImageID": { "Ref" : "TestControllerImageID"},
+               "InstanceProfileName": { "Fn::GetAtt" : ["IAMStack", "Outputs.DescribeEC2TagsInstanceProfileName"] }
             }
          }
       },
@@ -160,7 +170,8 @@
                   {"Fn::GetAtt" : ["SGStack", "Outputs.WebserverHttpSG"]}
                ]]},
                "InstanceTypeParameter": { "Ref": "InstanceTypeParameter"},
-               "ImageID": { "Ref" : "TestWebserverImageID"}
+               "ImageID": { "Ref" : "TestWebserverImageID"},
+               "InstanceProfileName": { "Fn::GetAtt" : ["IAMStack", "Outputs.DescribeEC2TagsInstanceProfileName"] }
             }
          }
       },
@@ -176,7 +187,8 @@
                "SubnetIDs": { "Fn::GetAtt" : ["VPCStack", "Outputs.SubnetIds"] },
                "SecurityGroupIDs": { "Fn::GetAtt" : ["SGStack", "Outputs.BaseSG"] },
                "InstanceTypeParameter": { "Ref": "InstanceTypeParameter"},
-               "ImageID": { "Ref" : "TestControllerImageID"}
+               "ImageID": { "Ref" : "TestControllerImageID"},
+               "InstanceProfileName": { "Fn::GetAtt" : ["IAMStack", "Outputs.DescribeEC2TagsInstanceProfileName"] }
             }
          }
       },
@@ -195,7 +207,8 @@
                   {"Fn::GetAtt" : ["SGStack", "Outputs.WebserverHttpSG"]}
                ]]},
                "InstanceTypeParameter": { "Ref": "InstanceTypeParameter"},
-               "ImageID": { "Ref" : "TestWebserverImageID"}
+               "ImageID": { "Ref" : "TestWebserverImageID"},
+               "InstanceProfileName": { "Fn::GetAtt" : ["IAMStack", "Outputs.DescribeEC2TagsInstanceProfileName"] }
             }
          }
       }

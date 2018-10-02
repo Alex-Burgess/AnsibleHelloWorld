@@ -34,6 +34,10 @@
       "ImageID": {
          "Type" : "AWS::EC2::Image::Id",
          "Description" : "Enter AMI for instance"
+      },
+      "InstanceProfileName": {
+         "Type" : "String",
+         "Description" : "Enter name of IAM Instance Profile"
       }
    },
    "Resources": {
@@ -45,7 +49,7 @@
             "InstanceType": { "Ref" : "InstanceTypeParameter" },
             "SubnetId": { "Fn::Select" : [ "0", {"Ref" : "SubnetIDs"} ] },
             "SecurityGroupIds" : {"Ref": "SecurityGroupIDs"},
-            "IamInstanceProfile" : "ec2-describe-tags",
+            "IamInstanceProfile" : { "Ref": "InstanceProfileName"},
             "Monitoring": false,
             "Tags": [
                { "Key" : "Name", "Value" : "AnsibleController" },
@@ -63,7 +67,7 @@
             "InstanceType": { "Ref" : "InstanceTypeParameter" },
             "SubnetId": { "Fn::Select" : [ "1", {"Ref" : "SubnetIDs"} ] },
             "SecurityGroupIds" : {"Ref": "SecurityGroupIDs"},
-            "IamInstanceProfile" : "ec2-describe-tags",
+            "IamInstanceProfile" : { "Ref": "InstanceProfileName"},
             "Monitoring": false,
             "Tags": [
                { "Key" : "Name", "Value" : "AnsibleController" },

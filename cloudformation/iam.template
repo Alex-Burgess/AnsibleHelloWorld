@@ -1,0 +1,66 @@
+{
+   "AWSTemplateFormatVersion": "2010-09-09",
+   "Description": "Creates an IAM instance profile for use by EC2 instances in this stack.",
+   "Resources": {
+      "DescribeEC2TagsInstanceProfile" : {
+        "Type" : "AWS::IAM::InstanceProfile",
+        "Properties" : {
+          "Path" : "/",
+          "Roles" : [
+            {
+              "Ref" : "DescribeEC2TagsRole"
+            }
+          ]
+        }
+      },
+      "DescribeEC2TagsPolicy" : {
+        "Type" : "AWS::IAM::Policy",
+        "Properties" : {
+          "PolicyName" : "DescribeEC2TagsPolicy",
+          "PolicyDocument" : {
+            "Statement" : [
+              {
+                "Effect" : "Allow",
+                "Action" : [
+                  "ec2:DescribeTags"
+                ],
+                "Resource" : "*"
+              }
+            ]
+          },
+          "Roles" : [
+            {
+              "Ref" : "DescribeEC2TagsRole"
+            }
+          ]
+        }
+      },
+      "DescribeEC2TagsRole" : {
+        "Type" : "AWS::IAM::Role",
+        "Properties" : {
+          "RoleName": "ec2DescribeTags",
+          "AssumeRolePolicyDocument": {
+            "Version" : "2012-10-17",
+            "Statement" : [
+              {
+                "Effect" : "Allow",
+                "Principal" : {
+                  "Service" : ["ec2.amazonaws.com"]
+                },
+                "Action" : [
+                  "sts:AssumeRole"
+                ]
+              }
+            ]
+          },
+          "Path" : "/"
+        }
+      }
+   },
+   "Outputs" : {
+      "DescribeEC2TagsInstanceProfileName" : {
+         "Description" : "EC2 Instance profile name",
+         "Value" : { "Ref" : "DescribeEC2TagsInstanceProfile" }
+      }
+   }
+}
