@@ -42,39 +42,35 @@
    },
    "Resources": {
       "AnsibleInstance1": {
-         "Type": "AWS::EC2::Instance",
+         "Type": "AWS::CloudFormation::Stack",
          "Properties": {
-            "KeyName": "AlexMain",
-            "ImageId": { "Ref" : "ImageID" },
-            "InstanceType": { "Ref" : "InstanceTypeParameter" },
-            "SubnetId": { "Fn::Select" : [ "0", {"Ref" : "SubnetIDs"} ] },
-            "SecurityGroupIds" : {"Ref": "SecurityGroupIDs"},
-            "IamInstanceProfile" : { "Ref": "InstanceProfileName"},
-            "Monitoring": false,
-            "Tags": [
-               { "Key" : "Name", "Value" : "AnsibleController" },
-               { "Key" : "Application", "Value" : {"Ref" : "AppName" } },
-               { "Key" : "Environment", "Value" : { "Ref" : "Environment" } },
-               { "Key" : "Type", "Value" : "AnsibleController" }
-            ]
+            "TemplateURL": "https://s3.amazonaws.com/alex-demo-files/cf-templates/ansible-hello-world/ansible_instance.template",
+            "TimeoutInMinutes": 5,
+            "Parameters": {
+               "AppName": { "Ref": "AppName" },
+               "Environment": { "Ref" : "Environment" },
+               "SubnetID": { "Fn::Select" : [ "0", {"Ref" : "SubnetIDs"} ] },
+               "SecurityGroupIDs": { "Fn::Select" : [ "0", {"Ref" : "SecurityGroupIDs"} ] },
+               "InstanceTypeParameter": { "Ref": "InstanceTypeParameter"},
+               "ImageID": { "Ref" : "ImageID" },
+               "InstanceProfileName": { "Ref": "InstanceProfileName"}
+            }
          }
       },
       "AnsibleInstance2": {
-         "Type": "AWS::EC2::Instance",
+         "Type": "AWS::CloudFormation::Stack",
          "Properties": {
-            "KeyName": "AlexMain",
-            "ImageId": { "Ref" : "ImageID" },
-            "InstanceType": { "Ref" : "InstanceTypeParameter" },
-            "SubnetId": { "Fn::Select" : [ "1", {"Ref" : "SubnetIDs"} ] },
-            "SecurityGroupIds" : {"Ref": "SecurityGroupIDs"},
-            "IamInstanceProfile" : { "Ref": "InstanceProfileName"},
-            "Monitoring": false,
-            "Tags": [
-               { "Key" : "Name", "Value" : "AnsibleController" },
-               { "Key" : "Application", "Value" : {"Ref" : "AppName" } },
-               { "Key" : "Environment", "Value" : { "Ref" : "Environment" } },
-               { "Key" : "Type", "Value" : "AnsibleController" }
-            ]
+            "TemplateURL": "https://s3.amazonaws.com/alex-demo-files/cf-templates/ansible-hello-world/ansible_instance.template",
+            "TimeoutInMinutes": 5,
+            "Parameters": {
+               "AppName": { "Ref": "AppName" },
+               "Environment": { "Ref" : "Environment" },
+               "SubnetID": { "Fn::Select" : [ "1", {"Ref" : "SubnetIDs"} ] },
+               "SecurityGroupIDs": { "Fn::Select" : [ "0", {"Ref" : "SecurityGroupIDs"} ] },
+               "InstanceTypeParameter": { "Ref": "InstanceTypeParameter"},
+               "ImageID": { "Ref" : "ImageID" },
+               "InstanceProfileName": { "Ref": "InstanceProfileName"}
+            }
          }
       }
    },
@@ -82,15 +78,15 @@
       "PrivateIPs" : {
          "Description" : "Private IPs of ansible controller instances",
          "Value" : { "Fn::Join" : [ ",", [
-            { "Fn::GetAtt" : ["AnsibleInstance1", "PrivateIp"] },
-            { "Fn::GetAtt" : ["AnsibleInstance2", "PrivateIp"] }
+            { "Fn::GetAtt" : ["AnsibleInstance1", "Outputs.PrivateIp"] },
+            { "Fn::GetAtt" : ["AnsibleInstance2", "Outputs.PrivateIp"] }
          ] ] }
       },
       "PublicIPs" : {
          "Description" : "Public IPs of ansible controller instances",
          "Value" : { "Fn::Join" : [ ",", [
-            { "Fn::GetAtt" : ["AnsibleInstance1", "PublicIp"] },
-            { "Fn::GetAtt" : ["AnsibleInstance2", "PublicIp"] }
+            { "Fn::GetAtt" : ["AnsibleInstance1", "Outputs.PublicIp"] },
+            { "Fn::GetAtt" : ["AnsibleInstance2", "Outputs.PublicIp"] }
          ] ] }
       }
    }

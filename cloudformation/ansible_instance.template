@@ -1,6 +1,45 @@
 {
    "AWSTemplateFormatVersion": "2010-09-09",
    "Description": "Creates Ansible Controller Instances",
+   "Parameters": {
+      "AppName" : {
+          "Type" : "String",
+          "Description" : "Enter the name for the application",
+          "MinLength": 1,
+          "MaxLength": 64,
+          "AllowedPattern": "[a-zA-Z][a-zA-Z0-9-]*",
+          "ConstraintDescription": "AppName must begin with a letter and contain alphanumeric characters, or a hyphen."
+      },
+      "Environment": {
+          "Type" : "String",
+          "AllowedValues" : ["prod", "staging", "test"],
+          "Default" : "test",
+          "Description" : "Enter the environment",
+          "ConstraintDescription" : "Environment must be one of prod, uat, dev, or test"
+      },
+      "SubnetID": {
+         "Type" : "AWS::EC2::Subnet::Id",
+         "Description" : "Subnet ID"
+      },
+      "SecurityGroupIDs": {
+         "Type" : "List<AWS::EC2::SecurityGroup::Id>",
+         "Description" : "List of Security Group IDs"
+      },
+      "InstanceTypeParameter" : {
+        "Type" : "String",
+        "Default" : "t3.nano",
+        "AllowedValues" : ["t3.nano", "t3.micro", "t3.small", "t2.nano", "t2.micro", "t2.small"],
+        "Description" : "Enter t3.nano, t3.micro, t3.small, t2.nano, t2.micro, or t2.small. Default is t3.nano."
+     },
+      "ImageID": {
+         "Type" : "AWS::EC2::Image::Id",
+         "Description" : "Enter AMI for instance"
+      },
+      "InstanceProfileName": {
+         "Type" : "String",
+         "Description" : "Enter name of IAM Instance Profile"
+      }
+   },
    "Resources": {
       "AnsibleInstance": {
          "Type": "AWS::EC2::Instance",
@@ -74,16 +113,16 @@
          },
          "Properties": {
             "KeyName": "AlexMain",
-            "ImageId": "ami-0bdb1d6c15a40392c",
-            "InstanceType": "t3.nano",
-            "SubnetId": "subnet-2937dc4f",
-            "SecurityGroupIds" : ["sg-2c660256"],
-            "IamInstanceProfile" : "EC2-Describe-Tags-Instance-Profile",
+            "ImageId": { "Ref" : "ImageID" },
+            "InstanceType": { "Ref" : "InstanceTypeParameter" },
+            "SubnetId": { "Ref" : "SubnetID" },
+            "SecurityGroupIds" : {"Ref": "SecurityGroupIDs"},
+            "IamInstanceProfile" : { "Ref": "InstanceProfileName"},
             "Monitoring": false,
             "Tags": [
                { "Key" : "Name", "Value" : "AnsibleController" },
-               { "Key" : "Application", "Value" : "AC-Test" },
-               { "Key" : "Environment", "Value" : "Test" },
+               { "Key" : "Application", "Value" : {"Ref" : "AppName" } },
+               { "Key" : "Environment", "Value" : { "Ref" : "Environment" } },
                { "Key" : "Type", "Value" : "AnsibleController" }
             ],
             "UserData": { "Fn::Base64" : { "Fn::Join" : ["", [
