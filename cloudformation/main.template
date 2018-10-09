@@ -205,51 +205,6 @@
       "VpcId" : {
          "Description" : "VPC ID",
          "Value": { "Fn::GetAtt" : ["VPCStack", "Outputs.VpcId"]}
-      },
-      "ProdAnsibleControllerPublicIPs" : {
-         "Description" : "Prod - Ansible Controller Public IPs",
-         "Value": { "Fn::GetAtt" : ["ProdAnsibleControllerStack", "Outputs.PublicIPs"] },
-         "Condition" : "CreateProdResources"
-      },
-      "ProdWebserverPrivateIPs" : {
-         "Description" : "Prod - Webserver Private IPs",
-         "Value": { "Fn::GetAtt" : ["ProdWebserverStack", "Outputs.PrivateIPs"] },
-         "Condition" : "CreateProdResources"
-      },
-      "ProdWebserverPublicIPs" : {
-         "Description" : "Prod - Webserver Public IPs",
-         "Value": { "Fn::GetAtt" : ["ProdWebserverStack", "Outputs.PublicIPs"] },
-         "Condition" : "CreateProdResources"
-      },
-      "StagingAnsibleControllerPublicIPs" : {
-         "Description" : "Staging - Ansible Controller Public IPs",
-         "Value": { "Fn::GetAtt" : ["StagingAnsibleControllerStack", "Outputs.PublicIPs"] },
-         "Condition" : "CreateStagingResources"
-      },
-      "StagingWebserverPrivateIPs" : {
-         "Description" : "Staging - Webserver Private IPs",
-         "Value": { "Fn::GetAtt" : ["StagingWebserverStack", "Outputs.PrivateIPs"] },
-         "Condition" : "CreateStagingResources"
-      },
-      "StagingWebserverPublicIPs" : {
-         "Description" : "Staging - Webserver Public IPs",
-         "Value": { "Fn::GetAtt" : ["StagingWebserverStack", "Outputs.PublicIPs"] },
-         "Condition" : "CreateStagingResources"
-      },
-      "TestAnsibleControllerPublicIPs" : {
-         "Description" : "Test - Ansible Controller Public IPs",
-         "Value": { "Fn::GetAtt" : ["TestAnsibleControllerStack", "Outputs.PublicIPs"] },
-         "Condition" : "CreateTestResources"
-      },
-      "TestWebserverPrivateIPs" : {
-         "Description" : "Test - Webserver Private IPs",
-         "Value": { "Fn::GetAtt" : ["TestWebserverStack", "Outputs.PrivateIPs"] },
-         "Condition" : "CreateTestResources"
-      },
-      "TestWebserverPublicIPs" : {
-         "Description" : "Test - Webserver Public IPs",
-         "Value": { "Fn::GetAtt" : ["TestWebserverStack", "Outputs.PublicIPs"] },
-         "Condition" : "CreateTestResources"
       }
    }
 }
