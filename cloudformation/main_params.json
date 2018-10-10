@@ -16,6 +16,10 @@
       "ParameterValue": "ami-0eafb5ee12a2cbffc"
    },
    {
+      "ParameterKey": "SpotPrice",
+      "ParameterValue": "0.0057"
+   },
+   {
       "ParameterKey": "BuildProd",
       "ParameterValue": "false"
    },

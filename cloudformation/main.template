@@ -26,6 +26,11 @@
          "Type" : "AWS::EC2::Image::Id",
          "Description" : "Enter AMI for instance"
       },
+      "SpotPrice" : {
+         "Type" : "String",
+         "Default" : "0.0057",
+         "Description" : "Enter a spot price for the instances. Default is 0.0057 which is the on demand price for t3.nano."
+      },
       "BuildProd": {
          "AllowedValues": [
             "true",
@@ -102,7 +107,8 @@
                "SecurityGroupIDs": { "Fn::GetAtt" : ["SGStack", "Outputs.BaseSG"] },
                "InstanceTypeParameter": { "Ref": "InstanceTypeParameter"},
                "ImageID": { "Ref" : "ImageID"},
-               "InstanceProfileName": { "Fn::GetAtt" : ["IAMStack", "Outputs.DescribeEC2TagsInstanceProfileName"] }
+               "InstanceProfileName": { "Fn::GetAtt" : ["IAMStack", "Outputs.DescribeEC2TagsInstanceProfileName"] },
+               "SpotPrice" : { "Ref" : "SpotPrice" }
             }
          }
       },
@@ -139,7 +145,8 @@
                "SecurityGroupIDs": { "Fn::GetAtt" : ["SGStack", "Outputs.BaseSG"] },
                "InstanceTypeParameter": { "Ref": "InstanceTypeParameter"},
                "ImageID": { "Ref" : "ImageID"},
-               "InstanceProfileName": { "Fn::GetAtt" : ["IAMStack", "Outputs.DescribeEC2TagsInstanceProfileName"] }
+               "InstanceProfileName": { "Fn::GetAtt" : ["IAMStack", "Outputs.DescribeEC2TagsInstanceProfileName"] },
+               "SpotPrice" : { "Ref" : "SpotPrice" }
             }
          }
       },
@@ -176,7 +183,8 @@
                "SecurityGroupIDs": { "Fn::GetAtt" : ["SGStack", "Outputs.BaseSG"] },
                "InstanceTypeParameter": { "Ref": "InstanceTypeParameter"},
                "ImageID": { "Ref" : "ImageID"},
-               "InstanceProfileName": { "Fn::GetAtt" : ["IAMStack", "Outputs.DescribeEC2TagsInstanceProfileName"] }
+               "InstanceProfileName": { "Fn::GetAtt" : ["IAMStack", "Outputs.DescribeEC2TagsInstanceProfileName"] },
+               "SpotPrice" : { "Ref" : "SpotPrice" }
             }
          }
       },
