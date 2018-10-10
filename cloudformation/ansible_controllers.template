@@ -38,6 +38,11 @@
     "InstanceProfileName": {
       "Type" : "String",
       "Description" : "Enter name of IAM Instance Profile"
+    },
+    "SpotPrice": {
+      "Type" : "String",
+      "Default" : "0.0057",
+      "Description" : "Enter a spot price for the instances. Default is 0.0057 which is the on demand price for t3.nano."
     }
   },
   "Resources": {
@@ -112,12 +117,13 @@
         }
       },
       "Properties" : {
-        "KeyName" : "AlexMain",
+        "KeyName": "AlexMain",
         "ImageId" : { "Ref" : "ImageID" },
         "SecurityGroups" : {"Ref": "SecurityGroupIDs"},
         "InstanceType" : { "Ref" : "InstanceTypeParameter" },
         "IamInstanceProfile" : { "Ref": "InstanceProfileName"},
         "AssociatePublicIpAddress" : true,
+        "SpotPrice" : { "Ref" : "SpotPrice" },
         "UserData": { "Fn::Base64" : { "Fn::Join" : ["", [
            "#!/bin/bash -xe\n",
            "yum install -y aws-cfn-bootstrap\n",
@@ -139,12 +145,21 @@
     },
     "AnsibleControllerGroup": {
       "Type" : "AWS::AutoScaling::AutoScalingGroup",
+      "UpdatePolicy" : {
+        "AutoScalingRollingUpdate" : {
+          "MinInstancesInService" : "0",
+          "MaxBatchSize" : "1",
+          "PauseTime" : "PT3M",
+          "WaitOnResourceSignals" : "true"
+        }
+      },
       "Properties" : {
         "VPCZoneIdentifier" : { "Ref": "SubnetIDs" },
         "AvailabilityZones" : { "Fn::GetAZs" : ""},
         "LaunchConfigurationName" : { "Ref" : "LaunchConfig" },
-        "MaxSize" : "2",
-        "MinSize" : "2",
+        "DesiredCapacity" : "2",
+        "MaxSize" : "3",
+        "MinSize" : "1",
         "Tags": [
            { "Key" : "Name", "Value" : "AnsibleController", "PropagateAtLaunch" : true },
            { "Key" : "Application", "Value" : {"Ref" : "AppName" }, "PropagateAtLaunch" : true },
