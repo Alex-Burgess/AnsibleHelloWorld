@@ -112,6 +112,13 @@
              "SubnetId" : { "Ref" : "PublicSubnet2" },
              "RouteTableId" : { "Ref" : "PublicRouteTable" }
            }
+      },
+      "SubnetRouteTableAssociation3" : {
+           "Type" : "AWS::EC2::SubnetRouteTableAssociation",
+           "Properties" : {
+             "SubnetId" : { "Ref" : "PublicSubnet3" },
+             "RouteTableId" : { "Ref" : "PublicRouteTable" }
+           }
       }
    },
    "Outputs" : {
