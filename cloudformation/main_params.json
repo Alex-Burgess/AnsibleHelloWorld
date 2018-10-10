@@ -25,10 +25,34 @@
    },
    {
       "ParameterKey": "BuildProd",
-      "ParameterValue": "false"
+      "ParameterValue": "true"
    },
    {
       "ParameterKey": "BuildStaging",
-      "ParameterValue": "false"
+      "ParameterValue": "true"
+   },
+   {
+      "ParameterKey": "ProdAnsibleControllerDesiredCapacity",
+      "ParameterValue": "2"
+   },
+   {
+      "ParameterKey": "ProdWebserverDesiredCapacity",
+      "ParameterValue": "6"
+   },
+   {
+      "ParameterKey": "StagingAnsibleControllerDesiredCapacity",
+      "ParameterValue": "2"
+   },
+   {
+      "ParameterKey": "StagingWebserverDesiredCapacity",
+      "ParameterValue": "2"
+   },
+   {
+      "ParameterKey": "TestAnsibleControllerDesiredCapacity",
+      "ParameterValue": "1"
+   },
+   {
+      "ParameterKey": "TestWebserverDesiredCapacity",
+      "ParameterValue": "2"
    }
 ]

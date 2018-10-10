@@ -47,6 +47,16 @@
    "InstanceKeyName" : {
       "Type" : "String",
       "Description" : "Enter the name for the key used to ssh to ec2 instances."
+   },
+   "AnsibleControllerDesiredCapacity" : {
+     "Type" : "String",
+     "Default" : "2",
+     "Description" : "Enter the number of ansible controller instances required."
+   },
+   "WebserverDesiredCapacity" : {
+     "Type" : "String",
+     "Default" : "2",
+     "Description" : "Enter the number of webserver instances required."
    }
   },
   "Resources": {
@@ -135,14 +145,14 @@
            "# Install the files and packages from the metadata\n",
            "/opt/aws/bin/cfn-init -v ",
            "         --stack ", { "Ref" : "AWS::StackName" },
-           "         --resource LaunchConfig ",
+           "         --resource AnsibleLaunchConfig ",
            "         --configsets Install ",
            "         --region ", { "Ref" : "AWS::Region" }, "\n",
 
            "# Signal the status from cfn-init\n",
            "/opt/aws/bin/cfn-signal -e $? ",
            "         --stack ", { "Ref" : "AWS::StackName" },
-           "         --resource LaunchConfig ",
+           "         --resource AnsibleLaunchConfig ",
            "         --region ", { "Ref" : "AWS::Region" }, "\n"
         ]]}}
       }
@@ -161,8 +171,8 @@
         "VPCZoneIdentifier" : { "Ref": "SubnetIDs" },
         "AvailabilityZones" : { "Fn::GetAZs" : ""},
         "LaunchConfigurationName" : { "Ref" : "AnsibleLaunchConfig" },
-        "DesiredCapacity" : "2",
-        "MaxSize" : "3",
+        "DesiredCapacity" : { "Ref" : "AnsibleControllerDesiredCapacity" },
+        "MaxSize" : { "Ref" : "AnsibleControllerDesiredCapacity" },
         "MinSize" : "1",
         "Tags": [
            { "Key" : "Name", "Value" : "AnsibleController", "PropagateAtLaunch" : true },
@@ -220,14 +230,14 @@
            "# Install the files and packages from the metadata\n",
            "/opt/aws/bin/cfn-init -v ",
            "         --stack ", { "Ref" : "AWS::StackName" },
-           "         --resource LaunchConfig ",
+           "         --resource WebserverLaunchConfig ",
            "         --configsets Install ",
            "         --region ", { "Ref" : "AWS::Region" }, "\n",
 
            "# Signal the status from cfn-init\n",
            "/opt/aws/bin/cfn-signal -e $? ",
            "         --stack ", { "Ref" : "AWS::StackName" },
-           "         --resource LaunchConfig ",
+           "         --resource WebserverLaunchConfig ",
            "         --region ", { "Ref" : "AWS::Region" }, "\n"
         ]]}}
       }
@@ -246,8 +256,8 @@
         "VPCZoneIdentifier" : { "Ref": "SubnetIDs" },
         "AvailabilityZones" : { "Fn::GetAZs" : ""},
         "LaunchConfigurationName" : { "Ref" : "WebserverLaunchConfig" },
-        "DesiredCapacity" : "2",
-        "MaxSize" : "3",
+        "DesiredCapacity" : { "Ref" : "WebserverDesiredCapacity" },
+        "MaxSize" : { "Ref" : "WebserverDesiredCapacity" },
         "MinSize" : "1",
         "Tags": [
            { "Key" : "Name", "Value" : "HelloWorldWebserver", "PropagateAtLaunch" : true },

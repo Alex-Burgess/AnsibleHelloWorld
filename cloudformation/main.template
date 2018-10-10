@@ -61,6 +61,36 @@
          "Default": "true",
          "Description": "To build the test environment, set this parameter to true",
          "Type": "String"
+      },
+      "ProdAnsibleControllerDesiredCapacity" : {
+        "Type" : "String",
+        "Default" : "2",
+        "Description" : "Enter the number of ansible controller instances required. Note - BuildProd must be set to true as well."
+      },
+      "ProdWebserverDesiredCapacity" : {
+        "Type" : "String",
+        "Default" : "2",
+        "Description" : "Enter the number of webserver instances required. Note - BuildProd must be set to true as well."
+      },
+      "StagingAnsibleControllerDesiredCapacity" : {
+        "Type" : "String",
+        "Default" : "2",
+        "Description" : "Enter the number of ansible controller instances required. Note - BuildStaging must be set to true as well."
+      },
+      "StagingWebserverDesiredCapacity" : {
+        "Type" : "String",
+        "Default" : "2",
+        "Description" : "Enter the number of webserver instances required. Note - BuildStaging must be set to true as well."
+      },
+      "TestAnsibleControllerDesiredCapacity" : {
+        "Type" : "String",
+        "Default" : "2",
+        "Description" : "Enter the number of ansible controller instances required."
+      },
+      "TestWebserverDesiredCapacity" : {
+        "Type" : "String",
+        "Default" : "2",
+        "Description" : "Enter the number of webserver instances required."
       }
    },
    "Conditions" : {
@@ -113,7 +143,9 @@
                "InstanceTypeParameter": { "Ref": "InstanceTypeParameter"},
                "ImageID": { "Ref" : "ImageID"},
                "InstanceProfileName": { "Fn::GetAtt" : ["IAMStack", "Outputs.DescribeEC2TagsInstanceProfileName"] },
-               "SpotPrice" : { "Ref" : "SpotPrice" }
+               "SpotPrice" : { "Ref" : "SpotPrice" },
+               "AnsibleControllerDesiredCapacity" : { "Ref" : "ProdAnsibleControllerDesiredCapacity" },
+               "WebserverDesiredCapacity" : { "Ref" : "ProdWebserverDesiredCapacity" }
             }
          }
       },
@@ -135,7 +167,9 @@
                "InstanceTypeParameter": { "Ref": "InstanceTypeParameter"},
                "ImageID": { "Ref" : "ImageID"},
                "InstanceProfileName": { "Fn::GetAtt" : ["IAMStack", "Outputs.DescribeEC2TagsInstanceProfileName"] },
-               "SpotPrice" : { "Ref" : "SpotPrice" }
+               "SpotPrice" : { "Ref" : "SpotPrice" },
+               "AnsibleControllerDesiredCapacity" : { "Ref" : "StagingAnsibleControllerDesiredCapacity" },
+               "WebserverDesiredCapacity" : { "Ref" : "StagingWebserverDesiredCapacity" }
             }
          }
       },
@@ -157,7 +191,9 @@
                "InstanceTypeParameter": { "Ref": "InstanceTypeParameter"},
                "ImageID": { "Ref" : "ImageID"},
                "InstanceProfileName": { "Fn::GetAtt" : ["IAMStack", "Outputs.DescribeEC2TagsInstanceProfileName"] },
-               "SpotPrice" : { "Ref" : "SpotPrice" }
+               "SpotPrice" : { "Ref" : "SpotPrice" },
+               "AnsibleControllerDesiredCapacity" : { "Ref" : "TestAnsibleControllerDesiredCapacity" },
+               "WebserverDesiredCapacity" : { "Ref" : "TestWebserverDesiredCapacity" }
             }
          }
       }
