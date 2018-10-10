@@ -126,6 +126,7 @@
             "Parameters": {
                "AppName": { "Ref": "AppName" },
                "Environment": "prod",
+               "InstanceKeyName" : { "Ref" : "InstanceKeyName"},
                "SubnetIDs": { "Fn::GetAtt" : ["VPCStack", "Outputs.SubnetIds"] },
                "SecurityGroupIDs": { "Fn::Join" : [",", [
                   {"Fn::GetAtt" : ["SGStack", "Outputs.BaseSG"]},
@@ -133,7 +134,8 @@
                ]]},
                "InstanceTypeParameter": { "Ref": "InstanceTypeParameter"},
                "ImageID": { "Ref" : "ImageID"},
-               "InstanceProfileName": { "Fn::GetAtt" : ["IAMStack", "Outputs.DescribeEC2TagsInstanceProfileName"] }
+               "InstanceProfileName": { "Fn::GetAtt" : ["IAMStack", "Outputs.DescribeEC2TagsInstanceProfileName"] },
+               "SpotPrice" : { "Ref" : "SpotPrice" }
             }
          }
       },
@@ -165,6 +167,7 @@
             "Parameters": {
                "AppName": { "Ref": "AppName" },
                "Environment": "staging",
+               "InstanceKeyName" : { "Ref" : "InstanceKeyName"},
                "SubnetIDs": { "Fn::GetAtt" : ["VPCStack", "Outputs.SubnetIds"] },
                "SecurityGroupIDs": { "Fn::Join" : [",", [
                   {"Fn::GetAtt" : ["SGStack", "Outputs.BaseSG"]},
@@ -172,7 +175,8 @@
                ]]},
                "InstanceTypeParameter": { "Ref": "InstanceTypeParameter"},
                "ImageID": { "Ref" : "ImageID"},
-               "InstanceProfileName": { "Fn::GetAtt" : ["IAMStack", "Outputs.DescribeEC2TagsInstanceProfileName"] }
+               "InstanceProfileName": { "Fn::GetAtt" : ["IAMStack", "Outputs.DescribeEC2TagsInstanceProfileName"] },
+               "SpotPrice" : { "Ref" : "SpotPrice" }
             }
          }
       },
@@ -204,6 +208,7 @@
             "Parameters": {
                "AppName": { "Ref": "AppName" },
                "Environment": "test",
+               "InstanceKeyName" : { "Ref" : "InstanceKeyName"},
                "SubnetIDs": { "Fn::GetAtt" : ["VPCStack", "Outputs.SubnetIds"] },
                "SecurityGroupIDs": { "Fn::Join" : [",", [
                   {"Fn::GetAtt" : ["SGStack", "Outputs.BaseSG"]},
@@ -211,7 +216,8 @@
                ]]},
                "InstanceTypeParameter": { "Ref": "InstanceTypeParameter"},
                "ImageID": { "Ref" : "ImageID"},
-               "InstanceProfileName": { "Fn::GetAtt" : ["IAMStack", "Outputs.DescribeEC2TagsInstanceProfileName"] }
+               "InstanceProfileName": { "Fn::GetAtt" : ["IAMStack", "Outputs.DescribeEC2TagsInstanceProfileName"] },
+               "SpotPrice" : { "Ref" : "SpotPrice" }
             }
          }
       }

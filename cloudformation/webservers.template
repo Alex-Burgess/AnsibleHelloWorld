@@ -1,97 +1,139 @@
 {
-   "AWSTemplateFormatVersion": "2010-09-09",
-   "Description": "Creates Webserver Instances",
-   "Parameters": {
-      "AppName" : {
-          "Type" : "String",
-          "Description" : "Enter the name for the application",
-          "MinLength": 1,
-          "MaxLength": 64,
-          "AllowedPattern": "[a-zA-Z][a-zA-Z0-9-]*",
-          "ConstraintDescription": "AppName must begin with a letter and contain alphanumeric characters, or a hyphen."
-      },
-      "Environment": {
-          "Type" : "String",
-          "AllowedValues" : ["prod", "staging", "test"],
-          "Default" : "test",
-          "Description" : "Enter the environment",
-          "ConstraintDescription" : "Environment must be one of prod, uat, dev, or test"
-      },
-      "SubnetIDs": {
-         "Type" : "List<AWS::EC2::Subnet::Id>",
-         "Description" : "List of Subnet IDs"
-      },
-      "SecurityGroupIDs": {
-         "Type" : "List<AWS::EC2::SecurityGroup::Id>",
-         "Description" : "List of Security Group IDs"
-      },
-      "InstanceTypeParameter" : {
-        "Type" : "String",
-        "Default" : "t3.nano",
-        "AllowedValues" : ["t3.nano", "t3.micro", "t3.small", "t2.nano", "t2.micro", "t2.small"],
-        "Description" : "Enter t3.nano, t3.micro, t3.small, t2.nano, t2.micro, or t2.small. Default is t3.nano."
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "Creates Webserver Instances",
+  "Parameters": {
+    "AppName" : {
+      "Type" : "String",
+      "Description" : "Enter the name for the application",
+      "MinLength": 1,
+      "MaxLength": 64,
+      "AllowedPattern": "[a-zA-Z][a-zA-Z0-9-]*",
+      "ConstraintDescription": "AppName must begin with a letter and contain alphanumeric characters, or a hyphen."
+    },
+    "Environment": {
+      "Type" : "String",
+      "AllowedValues" : ["prod", "staging", "test"],
+      "Default" : "test",
+      "Description" : "Enter the environment",
+      "ConstraintDescription" : "Environment must be one of prod, uat, dev, or test"
+    },
+    "SubnetIDs": {
+      "Type" : "List<AWS::EC2::Subnet::Id>",
+      "Description" : "List of Subnet IDs"
+    },
+    "SecurityGroupIDs": {
+      "Type" : "List<AWS::EC2::SecurityGroup::Id>",
+      "Description" : "List of Security Group IDs"
+    },
+    "InstanceTypeParameter" : {
+      "Type" : "String",
+      "Default" : "t3.nano",
+      "AllowedValues" : ["t3.nano", "t3.micro", "t3.small", "t2.nano", "t2.micro", "t2.small"],
+      "Description" : "Enter t3.nano, t3.micro, t3.small, t2.nano, t2.micro, or t2.small. Default is t3.nano."
      },
-      "ImageID": {
-         "Type" : "AWS::EC2::Image::Id",
-         "Description" : "Enter AMI for instance"
-      },
-      "InstanceProfileName": {
-         "Type" : "String",
-         "Description" : "Enter name of IAM Instance Profile"
-      }
+    "ImageID": {
+      "Type" : "AWS::EC2::Image::Id",
+      "Description" : "Enter AMI for instance"
+    },
+    "InstanceProfileName": {
+      "Type" : "String",
+      "Description" : "Enter name of IAM Instance Profile"
+    },
+    "SpotPrice": {
+      "Type" : "String",
+      "Default" : "0.0057",
+      "Description" : "Enter a spot price for the instances. Default is 0.0057 which is the on demand price for t3.nano."
+     },
+     "InstanceKeyName" : {
+      "Type" : "String",
+      "Description" : "Enter the name for the key used to ssh to ec2 instances."
+     }
    },
    "Resources": {
-      "WebserverInstance1": {
-         "Type": "AWS::EC2::Instance",
-         "Properties": {
-            "KeyName": "AlexMain",
-            "ImageId": { "Ref" : "ImageID" },
-            "InstanceType": { "Ref" : "InstanceTypeParameter" },
-            "SubnetId": { "Fn::Select" : [ "0", {"Ref" : "SubnetIDs"} ] },
-            "SecurityGroupIds" : {"Ref": "SecurityGroupIDs"},
-            "IamInstanceProfile" : { "Ref": "InstanceProfileName" },
-            "Monitoring": false,
-            "Tags": [
-               { "Key" : "Name", "Value" : "HelloWorldWebserver" },
-               { "Key" : "Application", "Value" : {"Ref" : "AppName" } },
-               { "Key" : "Environment", "Value" : { "Ref" : "Environment" } },
-               { "Key" : "Type", "Value" : "Webserver" }
-            ]
+     "LaunchConfig" : {
+       "Type" : "AWS::AutoScaling::LaunchConfiguration",
+       "Metadata" : {
+         "Comment1" : "Configure the bootstrap helpers to install pip and ansible",
+
+         "AWS::CloudFormation::Init" : {
+           "configSets" : {
+             "Install" : [ "BasePackages", "TagTool" ]
+           },
+           "BasePackages" : {
+             "commands" : {
+               "update_yum_packages" : {
+                 "command" : "yum update -y"
+               }
+             }
+           },
+           "TagTool" : {
+             "files" : {
+               "/usr/local/bin/ec2_tags.sh" : {
+                 "source": "https://raw.githubusercontent.com/Alex-Burgess/InterestingTools/master/ec2_tags.sh",
+                 "mode": "000744",
+                 "user": "root",
+                 "group": "root"
+               }
+             },
+             "commands" : {
+               "1_create_tag_export_file" : {
+                 "command" : "/usr/local/bin/ec2_tags.sh"
+               },
+             }
+           }
          }
-      },
-      "WebserverInstance2": {
-         "Type": "AWS::EC2::Instance",
-         "Properties": {
-            "KeyName": "AlexMain",
-            "ImageId": { "Ref" : "ImageID" },
-            "InstanceType": { "Ref" : "InstanceTypeParameter" },
-            "SubnetId": { "Fn::Select" : [ "1", {"Ref" : "SubnetIDs"} ] },
-            "SecurityGroupIds" : {"Ref": "SecurityGroupIDs"},
-            "IamInstanceProfile" : { "Ref": "InstanceProfileName" },
-            "Monitoring": false,
-            "Tags": [
-               { "Key" : "Name", "Value" : "HelloWorldWebserver" },
-               { "Key" : "Application", "Value" : {"Ref" : "AppName" } },
-               { "Key" : "Environment", "Value" : { "Ref" : "Environment" } },
-               { "Key" : "Type", "Value" : "Webserver" }
-            ]
+       },
+       "Properties" : {
+         "KeyName": { "Ref" : "InstanceKeyName"},
+         "ImageId" : { "Ref" : "ImageID" },
+         "SecurityGroups" : {"Ref": "SecurityGroupIDs"},
+         "InstanceType" : { "Ref" : "InstanceTypeParameter" },
+         "IamInstanceProfile" : { "Ref": "InstanceProfileName"},
+         "AssociatePublicIpAddress" : true,
+         "SpotPrice" : { "Ref" : "SpotPrice" },
+         "UserData": { "Fn::Base64" : { "Fn::Join" : ["", [
+            "#!/bin/bash -xe\n",
+            "yum install -y aws-cfn-bootstrap\n",
+
+            "# Install the files and packages from the metadata\n",
+            "/opt/aws/bin/cfn-init -v ",
+            "         --stack ", { "Ref" : "AWS::StackName" },
+            "         --resource LaunchConfig ",
+            "         --configsets Install ",
+            "         --region ", { "Ref" : "AWS::Region" }, "\n",
+
+            "# Signal the status from cfn-init\n",
+            "/opt/aws/bin/cfn-signal -e $? ",
+            "         --stack ", { "Ref" : "AWS::StackName" },
+            "         --resource LaunchConfig ",
+            "         --region ", { "Ref" : "AWS::Region" }, "\n"
+         ]]}}
+       }
+     },
+     "AnsibleControllerGroup": {
+       "Type" : "AWS::AutoScaling::AutoScalingGroup",
+       "UpdatePolicy" : {
+         "AutoScalingRollingUpdate" : {
+           "MinInstancesInService" : "0",
+           "MaxBatchSize" : "1",
+           "PauseTime" : "PT3M",
+           "WaitOnResourceSignals" : "true"
          }
-      }
-   },
-   "Outputs" : {
-      "PrivateIPs" : {
-         "Description" : "Private IPs of webserver instances",
-         "Value" : { "Fn::Join" : [ ",", [
-            { "Fn::GetAtt" : ["WebserverInstance1", "PrivateIp"] },
-            { "Fn::GetAtt" : ["WebserverInstance2", "PrivateIp"] }
-         ] ] }
-      },
-      "PublicIPs" : {
-         "Description" : "Public IPs of webserver instances",
-         "Value" : { "Fn::Join" : [ ",", [
-            { "Fn::GetAtt" : ["WebserverInstance1", "PublicIp"] },
-            { "Fn::GetAtt" : ["WebserverInstance2", "PublicIp"] }
-         ] ] }
-      }
+       },
+       "Properties" : {
+         "VPCZoneIdentifier" : { "Ref": "SubnetIDs" },
+         "AvailabilityZones" : { "Fn::GetAZs" : ""},
+         "LaunchConfigurationName" : { "Ref" : "LaunchConfig" },
+         "DesiredCapacity" : "2",
+         "MaxSize" : "3",
+         "MinSize" : "1",
+         "Tags": [
+            { "Key" : "Name", "Value" : "AnsibleController", "PropagateAtLaunch" : true },
+            { "Key" : "Application", "Value" : {"Ref" : "AppName" }, "PropagateAtLaunch" : true },
+            { "Key" : "Environment", "Value" : { "Ref" : "Environment" }, "PropagateAtLaunch" : true },
+            { "Key" : "Type", "Value" : "HelloWorldWebserver", "PropagateAtLaunch" : true }
+         ],
+       }
+     }
    }
 }
