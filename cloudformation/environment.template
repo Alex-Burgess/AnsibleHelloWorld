@@ -189,7 +189,7 @@
 
         "AWS::CloudFormation::Init" : {
           "configSets" : {
-            "Install" : [ "BasePackages", "TagTool" ]
+            "Install" : [ "BasePackages", "TagTool", "AnsiblePubKey" ]
           },
           "BasePackages" : {
             "commands" : {
@@ -211,6 +211,13 @@
               "1_create_tag_export_file" : {
                 "command" : "/usr/local/bin/ec2_tags.sh"
               },
+            }
+          },
+          "AnsiblePubKey" : {
+            "commands" : {
+              "1_get_ansible_pub_key" : {
+                "command" : "aws ssm get-parameter --name \"/Ansible/HelloWorld/test/public_key\" --with-decryption --query Parameter.Value >> /home/ec2-user/.ssh/authorized_keys"
+              }
             }
           }
         }

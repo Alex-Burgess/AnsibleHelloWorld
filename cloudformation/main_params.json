@@ -25,11 +25,11 @@
    },
    {
       "ParameterKey": "BuildProd",
-      "ParameterValue": "true"
+      "ParameterValue": "false"
    },
    {
       "ParameterKey": "BuildStaging",
-      "ParameterValue": "true"
+      "ParameterValue": "false"
    },
    {
       "ParameterKey": "ProdAnsibleControllerDesiredCapacity",
