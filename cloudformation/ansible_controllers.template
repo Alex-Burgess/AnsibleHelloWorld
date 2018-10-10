@@ -43,7 +43,11 @@
       "Type" : "String",
       "Default" : "0.0057",
       "Description" : "Enter a spot price for the instances. Default is 0.0057 which is the on demand price for t3.nano."
-    }
+   },
+   "InstanceKeyName" : {
+      "Type" : "String",
+      "Description" : "Enter the name for the key used to ssh to ec2 instances."
+   }
   },
   "Resources": {
     "LaunchConfig" : {
@@ -117,7 +121,7 @@
         }
       },
       "Properties" : {
-        "KeyName": "AlexMain",
+        "KeyName": { "Ref" : "InstanceKeyName"},
         "ImageId" : { "Ref" : "ImageID" },
         "SecurityGroups" : {"Ref": "SecurityGroupIDs"},
         "InstanceType" : { "Ref" : "InstanceTypeParameter" },

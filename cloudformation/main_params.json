@@ -20,6 +20,10 @@
       "ParameterValue": "0.0057"
    },
    {
+      "ParameterKey": "InstanceKeyName",
+      "ParameterValue": "AlexMain"
+   },
+   {
       "ParameterKey": "BuildProd",
       "ParameterValue": "false"
    },

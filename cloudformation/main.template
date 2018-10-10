@@ -31,6 +31,10 @@
          "Default" : "0.0057",
          "Description" : "Enter a spot price for the instances. Default is 0.0057 which is the on demand price for t3.nano."
       },
+      "InstanceKeyName" : {
+         "Type" : "String",
+         "Description" : "Enter the name for the key used to ssh to ec2 instances."
+      },
       "BuildProd": {
          "AllowedValues": [
             "true",
@@ -103,6 +107,7 @@
             "Parameters": {
                "AppName": { "Ref": "AppName" },
                "Environment": "prod",
+               "InstanceKeyName" : { "Ref" : "InstanceKeyName"},
                "SubnetIDs": { "Fn::GetAtt" : ["VPCStack", "Outputs.SubnetIds"] },
                "SecurityGroupIDs": { "Fn::GetAtt" : ["SGStack", "Outputs.BaseSG"] },
                "InstanceTypeParameter": { "Ref": "InstanceTypeParameter"},
@@ -141,6 +146,7 @@
             "Parameters": {
                "AppName": { "Ref": "AppName" },
                "Environment": "staging",
+               "InstanceKeyName" : { "Ref" : "InstanceKeyName"},
                "SubnetIDs": { "Fn::GetAtt" : ["VPCStack", "Outputs.SubnetIds"] },
                "SecurityGroupIDs": { "Fn::GetAtt" : ["SGStack", "Outputs.BaseSG"] },
                "InstanceTypeParameter": { "Ref": "InstanceTypeParameter"},
@@ -179,6 +185,7 @@
             "Parameters": {
                "AppName": { "Ref": "AppName" },
                "Environment": "test",
+               "InstanceKeyName" : { "Ref" : "InstanceKeyName"},
                "SubnetIDs": { "Fn::GetAtt" : ["VPCStack", "Outputs.SubnetIds"] },
                "SecurityGroupIDs": { "Fn::GetAtt" : ["SGStack", "Outputs.BaseSG"] },
                "InstanceTypeParameter": { "Ref": "InstanceTypeParameter"},
