@@ -1,6 +1,6 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
-  "Description": "Creates Ansible Controller Instances",
+  "Description": "Creates Ansible Controller setup and Webserver Instances",
   "Parameters": {
     "AppName" : {
       "Type" : "String",
@@ -50,7 +50,7 @@
    }
   },
   "Resources": {
-    "LaunchConfig" : {
+    "AnsibleLaunchConfig" : {
       "Type" : "AWS::AutoScaling::LaunchConfiguration",
       "Metadata" : {
         "Comment1" : "Configure the bootstrap helpers to install pip and ansible",
@@ -160,7 +160,7 @@
       "Properties" : {
         "VPCZoneIdentifier" : { "Ref": "SubnetIDs" },
         "AvailabilityZones" : { "Fn::GetAZs" : ""},
-        "LaunchConfigurationName" : { "Ref" : "LaunchConfig" },
+        "LaunchConfigurationName" : { "Ref" : "AnsibleLaunchConfig" },
         "DesiredCapacity" : "2",
         "MaxSize" : "3",
         "MinSize" : "1",
@@ -169,6 +169,91 @@
            { "Key" : "Application", "Value" : {"Ref" : "AppName" }, "PropagateAtLaunch" : true },
            { "Key" : "Environment", "Value" : { "Ref" : "Environment" }, "PropagateAtLaunch" : true },
            { "Key" : "Type", "Value" : "AnsibleController", "PropagateAtLaunch" : true }
+        ],
+      }
+    },
+    "WebserverLaunchConfig" : {
+      "Type" : "AWS::AutoScaling::LaunchConfiguration",
+      "Metadata" : {
+        "Comment1" : "Configure the bootstrap helpers to install pip and ansible",
+
+        "AWS::CloudFormation::Init" : {
+          "configSets" : {
+            "Install" : [ "BasePackages", "TagTool" ]
+          },
+          "BasePackages" : {
+            "commands" : {
+              "update_yum_packages" : {
+                "command" : "yum update -y"
+              }
+            }
+          },
+          "TagTool" : {
+            "files" : {
+              "/usr/local/bin/ec2_tags.sh" : {
+                "source": "https://raw.githubusercontent.com/Alex-Burgess/InterestingTools/master/ec2_tags.sh",
+                "mode": "000744",
+                "user": "root",
+                "group": "root"
+              }
+            },
+            "commands" : {
+              "1_create_tag_export_file" : {
+                "command" : "/usr/local/bin/ec2_tags.sh"
+              },
+            }
+          }
+        }
+      },
+      "Properties" : {
+        "KeyName": { "Ref" : "InstanceKeyName"},
+        "ImageId" : { "Ref" : "ImageID" },
+        "SecurityGroups" : {"Ref": "SecurityGroupIDs"},
+        "InstanceType" : { "Ref" : "InstanceTypeParameter" },
+        "IamInstanceProfile" : { "Ref": "InstanceProfileName"},
+        "AssociatePublicIpAddress" : true,
+        "SpotPrice" : { "Ref" : "SpotPrice" },
+        "UserData": { "Fn::Base64" : { "Fn::Join" : ["", [
+           "#!/bin/bash -xe\n",
+           "yum install -y aws-cfn-bootstrap\n",
+
+           "# Install the files and packages from the metadata\n",
+           "/opt/aws/bin/cfn-init -v ",
+           "         --stack ", { "Ref" : "AWS::StackName" },
+           "         --resource LaunchConfig ",
+           "         --configsets Install ",
+           "         --region ", { "Ref" : "AWS::Region" }, "\n",
+
+           "# Signal the status from cfn-init\n",
+           "/opt/aws/bin/cfn-signal -e $? ",
+           "         --stack ", { "Ref" : "AWS::StackName" },
+           "         --resource LaunchConfig ",
+           "         --region ", { "Ref" : "AWS::Region" }, "\n"
+        ]]}}
+      }
+    },
+    "WebserverControllerGroup": {
+      "Type" : "AWS::AutoScaling::AutoScalingGroup",
+      "UpdatePolicy" : {
+        "AutoScalingRollingUpdate" : {
+          "MinInstancesInService" : "0",
+          "MaxBatchSize" : "1",
+          "PauseTime" : "PT3M",
+          "WaitOnResourceSignals" : "true"
+        }
+      },
+      "Properties" : {
+        "VPCZoneIdentifier" : { "Ref": "SubnetIDs" },
+        "AvailabilityZones" : { "Fn::GetAZs" : ""},
+        "LaunchConfigurationName" : { "Ref" : "WebserverLaunchConfig" },
+        "DesiredCapacity" : "2",
+        "MaxSize" : "3",
+        "MinSize" : "1",
+        "Tags": [
+           { "Key" : "Name", "Value" : "HelloWorldWebserver", "PropagateAtLaunch" : true },
+           { "Key" : "Application", "Value" : {"Ref" : "AppName" }, "PropagateAtLaunch" : true },
+           { "Key" : "Environment", "Value" : { "Ref" : "Environment" }, "PropagateAtLaunch" : true },
+           { "Key" : "Type", "Value" : "Webserver", "PropagateAtLaunch" : true }
         ],
       }
     }

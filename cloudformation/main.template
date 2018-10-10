@@ -98,11 +98,11 @@
             "TimeoutInMinutes": 5
          }
       },
-      "ProdAnsibleControllerStack": {
+      "ProdStack": {
          "Type": "AWS::CloudFormation::Stack",
          "Condition" : "CreateProdResources",
          "Properties": {
-            "TemplateURL": "https://s3.amazonaws.com/alex-demo-files/cf-templates/ansible-hello-world/ansible_controllers.template",
+            "TemplateURL": "https://s3.amazonaws.com/alex-demo-files/cf-templates/ansible-hello-world/environment.template",
             "TimeoutInMinutes": 5,
             "Parameters": {
                "AppName": { "Ref": "AppName" },
@@ -117,52 +117,11 @@
             }
          }
       },
-      "ProdWebserverStack": {
-         "Type": "AWS::CloudFormation::Stack",
-         "Condition" : "CreateProdResources",
-         "Properties": {
-            "TemplateURL": "https://s3.amazonaws.com/alex-demo-files/cf-templates/ansible-hello-world/webservers.template",
-            "TimeoutInMinutes": 5,
-            "Parameters": {
-               "AppName": { "Ref": "AppName" },
-               "Environment": "prod",
-               "InstanceKeyName" : { "Ref" : "InstanceKeyName"},
-               "SubnetIDs": { "Fn::GetAtt" : ["VPCStack", "Outputs.SubnetIds"] },
-               "SecurityGroupIDs": { "Fn::Join" : [",", [
-                  {"Fn::GetAtt" : ["SGStack", "Outputs.BaseSG"]},
-                  {"Fn::GetAtt" : ["SGStack", "Outputs.WebserverHttpSG"]}
-               ]]},
-               "InstanceTypeParameter": { "Ref": "InstanceTypeParameter"},
-               "ImageID": { "Ref" : "ImageID"},
-               "InstanceProfileName": { "Fn::GetAtt" : ["IAMStack", "Outputs.DescribeEC2TagsInstanceProfileName"] },
-               "SpotPrice" : { "Ref" : "SpotPrice" }
-            }
-         }
-      },
-      "StagingAnsibleControllerStack": {
+      "StagingStack": {
          "Type": "AWS::CloudFormation::Stack",
          "Condition" : "CreateStagingResources",
          "Properties": {
-            "TemplateURL": "https://s3.amazonaws.com/alex-demo-files/cf-templates/ansible-hello-world/ansible_controllers.template",
-            "TimeoutInMinutes": 5,
-            "Parameters": {
-               "AppName": { "Ref": "AppName" },
-               "Environment": "staging",
-               "InstanceKeyName" : { "Ref" : "InstanceKeyName"},
-               "SubnetIDs": { "Fn::GetAtt" : ["VPCStack", "Outputs.SubnetIds"] },
-               "SecurityGroupIDs": { "Fn::GetAtt" : ["SGStack", "Outputs.BaseSG"] },
-               "InstanceTypeParameter": { "Ref": "InstanceTypeParameter"},
-               "ImageID": { "Ref" : "ImageID"},
-               "InstanceProfileName": { "Fn::GetAtt" : ["IAMStack", "Outputs.DescribeEC2TagsInstanceProfileName"] },
-               "SpotPrice" : { "Ref" : "SpotPrice" }
-            }
-         }
-      },
-      "StagingWebserverStack": {
-         "Type": "AWS::CloudFormation::Stack",
-         "Condition" : "CreateStagingResources",
-         "Properties": {
-            "TemplateURL": "https://s3.amazonaws.com/alex-demo-files/cf-templates/ansible-hello-world/webservers.template",
+            "TemplateURL": "https://s3.amazonaws.com/alex-demo-files/cf-templates/ansible-hello-world/environment.template",
             "TimeoutInMinutes": 5,
             "Parameters": {
                "AppName": { "Ref": "AppName" },
@@ -180,30 +139,11 @@
             }
          }
       },
-      "TestAnsibleControllerStack": {
+      "TestStack": {
          "Type": "AWS::CloudFormation::Stack",
          "Condition" : "CreateTestResources",
          "Properties": {
-            "TemplateURL": "https://s3.amazonaws.com/alex-demo-files/cf-templates/ansible-hello-world/ansible_controllers.template",
-            "TimeoutInMinutes": 5,
-            "Parameters": {
-               "AppName": { "Ref": "AppName" },
-               "Environment": "test",
-               "InstanceKeyName" : { "Ref" : "InstanceKeyName"},
-               "SubnetIDs": { "Fn::GetAtt" : ["VPCStack", "Outputs.SubnetIds"] },
-               "SecurityGroupIDs": { "Fn::GetAtt" : ["SGStack", "Outputs.BaseSG"] },
-               "InstanceTypeParameter": { "Ref": "InstanceTypeParameter"},
-               "ImageID": { "Ref" : "ImageID"},
-               "InstanceProfileName": { "Fn::GetAtt" : ["IAMStack", "Outputs.DescribeEC2TagsInstanceProfileName"] },
-               "SpotPrice" : { "Ref" : "SpotPrice" }
-            }
-         }
-      },
-      "TestWebserverStack": {
-         "Type": "AWS::CloudFormation::Stack",
-         "Condition" : "CreateTestResources",
-         "Properties": {
-            "TemplateURL": "https://s3.amazonaws.com/alex-demo-files/cf-templates/ansible-hello-world/webservers.template",
+            "TemplateURL": "https://s3.amazonaws.com/alex-demo-files/cf-templates/ansible-hello-world/environment.template",
             "TimeoutInMinutes": 5,
             "Parameters": {
                "AppName": { "Ref": "AppName" },
