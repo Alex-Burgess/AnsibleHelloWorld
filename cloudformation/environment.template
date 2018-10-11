@@ -91,6 +91,19 @@
               },
               "3_install_ansible_with_user" : {
                 "command" : "su ansible -c 'pip install ansible --user --no-cache-dir'"
+              },
+              "4_make_ssh_directory_for_ansible" : {
+                "command" : "su ansible -c 'mkdir /home/ansible/.ssh'"
+              },
+              "5_set_file_permissions_of_ansible_ssh_directory" : {
+                "command" : "su ansible -c 'chmod 700 /home/ansible/.ssh'"
+              },
+              "6_get_ansible_private_key" : {
+                "command" : "su ansible -c 'aws ssm get-parameter --name \"/Ansible/HelloWorld/$env_var/private_key\" --with-decryption --query Parameter.Value  --output text --region `curl -s http://169.254.169.254/latest/dynamic/instance-identity/document | grep region | cut -f4 -d \"\\\"\"` > /home/ansible/.ssh/ansible_$env_var'",
+                "env" : { "env_var" : { "Ref" : "Environment"} }
+              },
+              "7_set_file_permisions_for_ansible_private_key" : {
+                "command" : "su ansible -c 'chmod 400 /home/ansible/.ssh/ansible_test'"
               }
             }
           },
@@ -189,7 +202,7 @@
 
         "AWS::CloudFormation::Init" : {
           "configSets" : {
-            "Install" : [ "BasePackages", "TagTool", "AnsiblePubKey" ]
+            "Install" : [ "BasePackages", "ApacheSetup", "TagTool" ]
           },
           "BasePackages" : {
             "commands" : {
@@ -213,10 +226,23 @@
               },
             }
           },
-          "AnsiblePubKey" : {
+          "ApacheSetup" : {
             "commands" : {
-              "1_get_ansible_pub_key" : {
-                "command" : "aws ssm get-parameter --name \"/Ansible/HelloWorld/test/public_key\" --with-decryption --query Parameter.Value  --region `curl -s http://169.254.169.254/latest/dynamic/instance-identity/document | grep region | awk -F\\\" '{print $4}'` >> /home/ec2-user/.ssh/authorized_keys"
+              "1_create_apache_user" : {
+                "command" : "useradd -m apache"
+              },
+              "2_add_ec2-user_to_apache_group" : {
+                "command" : "usermod -a -G apache ec2-user"
+              },
+              "4_make_ssh_directory_for_ansible" : {
+                "command" : "su apache -c 'mkdir /home/apache/.ssh'"
+              },
+              "5_set_file_permissions_of_ansible_ssh_directory" : {
+                "command" : "su apache -c 'chmod 700 /home/apache/.ssh'"
+              },
+              "6_get_ansible_pub_key" : {
+                "command" : "su apache -c 'aws ssm get-parameter --name \"/Ansible/HelloWorld/$env_var/public_key\" --with-decryption --query Parameter.Value --output text --region `curl -s http://169.254.169.254/latest/dynamic/instance-identity/document | grep region | cut -f4 -d \"\\\"\"` >> /home/apache/.ssh/authorized_keys'",
+                "env" : { "env_var" : { "Ref" : "Environment"} }
               }
             }
           }

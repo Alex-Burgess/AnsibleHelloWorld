@@ -2,7 +2,7 @@
    "AWSTemplateFormatVersion": "2010-09-09",
    "Description": "Creates an IAM instance profile for use by EC2 instances in this stack.",
    "Resources": {
-      "DescribeEC2TagsInstanceProfile" : {
+      "AnsibleHelloworldInstanceProfile" : {
         "Type" : "AWS::IAM::InstanceProfile",
         "Properties" : {
           "Path" : "/",
@@ -80,9 +80,9 @@
       }
    },
    "Outputs" : {
-      "DescribeEC2TagsInstanceProfileName" : {
+      "AnsibleHelloworldInstanceProfileName" : {
          "Description" : "EC2 Instance profile name",
-         "Value" : { "Ref" : "DescribeEC2TagsInstanceProfile" }
+         "Value" : { "Ref" : "AnsibleHelloworldInstanceProfile" }
       }
    }
 }
