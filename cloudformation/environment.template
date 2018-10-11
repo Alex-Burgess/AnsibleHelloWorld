@@ -165,7 +165,7 @@
            "# Signal the status from cfn-init\n",
            "/opt/aws/bin/cfn-signal -e $? ",
            "         --stack ", { "Ref" : "AWS::StackName" },
-           "         --resource AnsibleLaunchConfig ",
+           "         --resource AnsibleControllerGroup ",
            "         --region ", { "Ref" : "AWS::Region" }, "\n"
         ]]}}
       }
@@ -270,7 +270,7 @@
            "# Signal the status from cfn-init\n",
            "/opt/aws/bin/cfn-signal -e $? ",
            "         --stack ", { "Ref" : "AWS::StackName" },
-           "         --resource WebserverLaunchConfig ",
+           "         --resource WebserverControllerGroup ",
            "         --region ", { "Ref" : "AWS::Region" }, "\n"
         ]]}}
       }
