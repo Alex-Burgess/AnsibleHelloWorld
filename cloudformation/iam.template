@@ -7,9 +7,7 @@
         "Properties" : {
           "Path" : "/",
           "Roles" : [
-            {
-              "Ref" : "DescribeEC2TagsRole"
-            }
+            { "Ref" : "AnsibleHelloworldEC2Role" }
           ]
         }
       },
@@ -30,15 +28,39 @@
           },
           "Roles" : [
             {
-              "Ref" : "DescribeEC2TagsRole"
+              "Ref" : "AnsibleHelloworldEC2Role"
             }
           ]
         }
       },
-      "DescribeEC2TagsRole" : {
+      "GetSsmParamsPolicy" : {
+        "Type" : "AWS::IAM::Policy",
+        "Properties" : {
+          "PolicyName" : "GetSsmParamsPolicy",
+          "PolicyDocument" : {
+            "Statement" : [
+              {
+                "Effect" : "Allow",
+                "Action" : [
+                  "ssm:Describe*",
+                  "ssm:Get*",
+                  "ssm:List*"
+                ],
+                "Resource" : "*"
+              }
+            ]
+          },
+          "Roles" : [
+            {
+              "Ref" : "AnsibleHelloworldEC2Role"
+            }
+          ]
+        }
+      },
+      "AnsibleHelloworldEC2Role" : {
         "Type" : "AWS::IAM::Role",
         "Properties" : {
-          "RoleName": "ec2DescribeTags",
+          "RoleName": "AnsibleHelloworldEC2Role",
           "AssumeRolePolicyDocument": {
             "Version" : "2012-10-17",
             "Statement" : [
