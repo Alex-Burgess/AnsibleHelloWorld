@@ -1,10 +1,26 @@
 {
    "AWSTemplateFormatVersion": "2010-09-09",
    "Description": "Creates an IAM instance profile for use by EC2 instances in this stack.",
+   "Parameters": {
+      "MainStackName" : {
+          "Type" : "String",
+          "Description" : "When used as a sub stack, can be used to enter the main stack name.  Otherwise this defaults to local stack name.",
+          "Default": "",
+          "MaxLength": 64,
+      }
+   },
+   "Conditions": {
+     "HasMainStackName": {"Fn::Not": [{"Fn::Equals": ["", {"Ref": "MainStackName"}]}]}
+   },
    "Resources": {
       "AnsibleHelloworldInstanceProfile" : {
         "Type" : "AWS::IAM::InstanceProfile",
         "Properties" : {
+          "InstanceProfileName": { "Fn::If": [
+            "HasMainStackName",
+            { "Fn::Join" : [ "-", [ "AnsibleHelloworldInstanceProfile", { "Ref" : "MainStackName"} ] ] },
+            {"Ref": "AWS::StackName"}
+          ]},
           "Path" : "/",
           "Roles" : [
             { "Ref" : "AnsibleHelloworldEC2Role" }
@@ -60,7 +76,11 @@
       "AnsibleHelloworldEC2Role" : {
         "Type" : "AWS::IAM::Role",
         "Properties" : {
-          "RoleName": "AnsibleHelloworldEC2Role",
+          "RoleName": { "Fn::If": [
+            "HasMainStackName",
+            { "Fn::Join" : [ "-", [ "AnsibleHelloworldEC2Role", { "Ref" : "MainStackName"} ] ] },
+            {"Ref": "AWS::StackName"}
+          ]},
           "AssumeRolePolicyDocument": {
             "Version" : "2012-10-17",
             "Statement" : [

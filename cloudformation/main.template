@@ -130,6 +130,9 @@
       "IAMStack": {
          "Type": "AWS::CloudFormation::Stack",
          "Properties": {
+            "Parameters": {
+              "MainStackName" : { "Ref" : "AWS::StackName" }
+            },
             "TemplateURL": "https://s3.amazonaws.com/alex-demo-files/cf-templates/ansible-hello-world/iam.template",
             "TimeoutInMinutes": 5
          }
