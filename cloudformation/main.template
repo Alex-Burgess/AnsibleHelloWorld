@@ -31,6 +31,12 @@
          "Default" : "0.0057",
          "Description" : "Enter a spot price for the instances. Default is 0.0057 which is the on demand price for t3.nano."
       },
+      "PurchaseOption": {
+        "Type" : "String",
+        "Description" : "Choose one of OnDemand or Spot",
+        "AllowedValues" : ["OnDemand", "Spot"],
+        "Default" : "Spot"
+      },
       "InstanceKeyName" : {
          "Type" : "String",
          "Description" : "Enter the name for the key used to ssh to ec2 instances."
@@ -142,8 +148,9 @@
                "SecurityGroupIDs": { "Fn::GetAtt" : ["SGStack", "Outputs.BaseSG"] },
                "InstanceTypeParameter": { "Ref": "InstanceTypeParameter"},
                "ImageID": { "Ref" : "ImageID"},
-               "InstanceProfileName": { "Fn::GetAtt" : ["IAMStack", "Outputs.DescribeEC2TagsInstanceProfileName"] },
+               "InstanceProfileName": { "Fn::GetAtt" : ["IAMStack", "Outputs.AnsibleHelloworldInstanceProfileName"] },
                "SpotPrice" : { "Ref" : "SpotPrice" },
+               "PurchaseOption" : { "Ref" : "PurchaseOption" },
                "AnsibleControllerDesiredCapacity" : { "Ref" : "ProdAnsibleControllerDesiredCapacity" },
                "WebserverDesiredCapacity" : { "Ref" : "ProdWebserverDesiredCapacity" }
             }
@@ -166,8 +173,9 @@
                ]]},
                "InstanceTypeParameter": { "Ref": "InstanceTypeParameter"},
                "ImageID": { "Ref" : "ImageID"},
-               "InstanceProfileName": { "Fn::GetAtt" : ["IAMStack", "Outputs.DescribeEC2TagsInstanceProfileName"] },
+               "InstanceProfileName": { "Fn::GetAtt" : ["IAMStack", "Outputs.AnsibleHelloworldInstanceProfileName"] },
                "SpotPrice" : { "Ref" : "SpotPrice" },
+               "PurchaseOption" : { "Ref" : "PurchaseOption" },
                "AnsibleControllerDesiredCapacity" : { "Ref" : "StagingAnsibleControllerDesiredCapacity" },
                "WebserverDesiredCapacity" : { "Ref" : "StagingWebserverDesiredCapacity" }
             }
@@ -190,8 +198,9 @@
                ]]},
                "InstanceTypeParameter": { "Ref": "InstanceTypeParameter"},
                "ImageID": { "Ref" : "ImageID"},
-               "InstanceProfileName": { "Fn::GetAtt" : ["IAMStack", "Outputs.DescribeEC2TagsInstanceProfileName"] },
+               "InstanceProfileName": { "Fn::GetAtt" : ["IAMStack", "Outputs.AnsibleHelloworldInstanceProfileName"] },
                "SpotPrice" : { "Ref" : "SpotPrice" },
+               "PurchaseOption" : { "Ref" : "PurchaseOption" },
                "AnsibleControllerDesiredCapacity" : { "Ref" : "TestAnsibleControllerDesiredCapacity" },
                "WebserverDesiredCapacity" : { "Ref" : "TestWebserverDesiredCapacity" }
             }

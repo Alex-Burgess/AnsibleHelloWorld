@@ -44,6 +44,12 @@
       "Default" : "0.0057",
       "Description" : "Enter a spot price for the instances. Default is 0.0057 which is the on demand price for t3.nano."
    },
+   "PurchaseOption": {
+     "Type" : "String",
+     "Description" : "Choose one of OnDemand or Spot",
+     "AllowedValues" : ["OnDemand", "Spot"],
+     "Default" : "Spot"
+   },
    "InstanceKeyName" : {
       "Type" : "String",
       "Description" : "Enter the name for the key used to ssh to ec2 instances."
@@ -58,6 +64,9 @@
      "Default" : "2",
      "Description" : "Enter the number of webserver instances required."
    }
+  },
+  "Conditions" : {
+     "IsSpot" : {"Fn::Equals" : [{"Ref" : "PurchaseOption"}, "Spot"]}
   },
   "Resources": {
     "AnsibleLaunchConfig" : {
@@ -150,7 +159,7 @@
         "InstanceType" : { "Ref" : "InstanceTypeParameter" },
         "IamInstanceProfile" : { "Ref": "InstanceProfileName"},
         "AssociatePublicIpAddress" : true,
-        "SpotPrice" : { "Ref" : "SpotPrice" },
+        "SpotPrice" : {"Fn::If": [ "IsSpot", { "Ref" : "SpotPrice" }, { "Ref" : "AWS::NoValue"}]},
         "UserData": { "Fn::Base64" : { "Fn::Join" : ["", [
            "#!/bin/bash -xe\n",
            "yum install -y aws-cfn-bootstrap\n",
@@ -255,7 +264,7 @@
         "InstanceType" : { "Ref" : "InstanceTypeParameter" },
         "IamInstanceProfile" : { "Ref": "InstanceProfileName"},
         "AssociatePublicIpAddress" : true,
-        "SpotPrice" : { "Ref" : "SpotPrice" },
+        "SpotPrice" : {"Fn::If": [ "IsSpot", { "Ref" : "SpotPrice" }, { "Ref" : "AWS::NoValue"}]},
         "UserData": { "Fn::Base64" : { "Fn::Join" : ["", [
            "#!/bin/bash -xe\n",
            "yum install -y aws-cfn-bootstrap\n",
