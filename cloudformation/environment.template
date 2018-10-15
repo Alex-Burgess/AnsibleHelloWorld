@@ -72,11 +72,46 @@
     "AnsibleLaunchConfig" : {
       "Type" : "AWS::AutoScaling::LaunchConfiguration",
       "Metadata" : {
-        "Comment1" : "Configure the bootstrap helpers to install pip and ansible",
+        "Comment1" : "Bootstrap ansible controller server. Make use of cfn helper scripts for updates and bespoke tag display tool. Update all yum packages for security patches and install pip. Bootstrap Ansible setup, with key and necessary directory structure.",
 
         "AWS::CloudFormation::Init" : {
           "configSets" : {
-            "Install" : [ "BasePackages", "AnsibleSetup", "AppDirs", "TagTool" ]
+            "Install" : [ "HelperScripts", "BasePackages", "AnsibleSetup", "AppDirs", "TagTool" ]
+          },
+          "HelperScripts" : {
+            "files" : {
+              "/etc/cfn/cfn-hup.conf" : {
+                "content" : { "Fn::Join" : ["", [
+                  "[main]\n",
+                  "stack=", { "Ref" : "AWS::StackId" }, "\n",
+                  "region=", { "Ref" : "AWS::Region" }, "\n",
+                  "interval=5\n"
+                ]]},
+                "mode"    : "000400",
+                "owner"   : "root",
+                "group"   : "root"
+              },
+              "/etc/cfn/hooks.d/cfn-auto-reloader.conf" : {
+                "content": { "Fn::Join" : ["", [
+                  "[cfn-auto-reloader-hook]\n",
+                  "triggers=post.update\n",
+                  "path=Resources.AnsibleLaunchConfig.Metadata.AWS::CloudFormation::Init\n",
+                  "action=/opt/aws/bin/cfn-init -v ",
+                  "         --stack ", { "Ref" : "AWS::StackName" },
+                  "         --configsets Install ",
+                  "         --resource AnsibleLaunchConfig ",
+                  "         --region ", { "Ref" : "AWS::Region" }, "\n",
+                  "runas=root\n"
+                ]]}
+              }
+            },
+            "services" : {
+              "sysvinit" : {
+                "cfn-hup" : { "enabled" : "true", "ensureRunning" : "true",
+                  "files" : ["/etc/cfn/cfn-hup.conf", "/etc/cfn/hooks.d/cfn-auto-reloader.conf"]
+                }
+              }
+            }
           },
           "BasePackages" : {
             "packages" : {
@@ -93,7 +128,8 @@
           "AnsibleSetup" : {
             "commands" : {
               "1_create_ansible_user" : {
-                "command" : "useradd -m ansible"
+                "command" : "useradd -m ansible",
+                "test" : "test -n grep ansible /etc/passwd"
               },
               "2_add_ec2-user_to_ansible_group" : {
                 "command" : "usermod -a -G ansible ec2-user"
@@ -102,35 +138,53 @@
                 "command" : "su ansible -c 'pip install ansible --user --no-cache-dir'"
               },
               "4_make_ssh_directory_for_ansible" : {
-                "command" : "su ansible -c 'mkdir /home/ansible/.ssh'"
+                "command" : "su ansible -c 'mkdir /home/ansible/.ssh'",
+                "test" : "test ! -e /home/ansible/.ssh"
               },
               "5_set_file_permissions_of_ansible_ssh_directory" : {
                 "command" : "su ansible -c 'chmod 700 /home/ansible/.ssh'"
               },
-              "6_get_ansible_private_key" : {
+              "6_change_file_permisions_of_private_key" : {
+                "command" : "chmod 600 /home/ansible/.ssh/ansible_$env_var",
+                "env" : { "env_var" : { "Ref" : "Environment"} },
+                "test" : "test -e /home/ansible/.ssh/ansible_$env_var"
+              },
+              "7_get_ansible_private_key" : {
                 "command" : "su ansible -c 'aws ssm get-parameter --name \"/Ansible/HelloWorld/$env_var/private_key\" --with-decryption --query Parameter.Value  --output text --region `curl -s http://169.254.169.254/latest/dynamic/instance-identity/document | grep region | cut -f4 -d \"\\\"\"` > /home/ansible/.ssh/ansible_$env_var'",
                 "env" : { "env_var" : { "Ref" : "Environment"} }
               },
-              "7_set_file_permisions_for_ansible_private_key" : {
+              "8_set_file_permisions_for_ansible_private_key" : {
                 "command" : "su ansible -c 'chmod 400 /home/ansible/.ssh/ansible_test'"
               }
             }
           },
           "AppDirs" : {
             "commands" : {
-              "1_create_slash_app" : {
-                "command" : "mkdir /app -m 755"
+              "1_create_app_dir" : {
+                "command" : "mkdir /app",
+                "test" : "test ! -e /app"
               },
-              "2_create_ansible_directory" : {
-                "command" : "mkdir /app/ansible -m 775"
+              "2_set_app_dir_permissions" : {
+                "command" : "chmod 755 /app"
               },
-              "3_set_ownership_of_ansible_directory" : {
+              "3_create_ansible_directory" : {
+                "command" : "mkdir /app/ansible",
+                "test" : "test ! -e /app/ansible"
+              },
+              "4_set_ansible_dir_permissions" : {
+                "command" : "chmod 775 /app/ansible"
+              },
+              "5_set_ansible_dir_owner" : {
                 "command" : "chown ansible:ansible /app/ansible"
               },
-              "4_create_applications_directory" : {
-                "command" : "mkdir /app/applications -m 775"
+              "6_create_applications_directory" : {
+                "command" : "mkdir /app/applications -m 775",
+                "test" : "test ! -e /app/applications"
               },
-              "5_set_ownership_of_applications_directory" : {
+              "7_set_applications_dir_permissions" : {
+                "command" : "chmod 775 /app/applications"
+              },
+              "8_set_applications_dir_owner" : {
                 "command" : "chown ansible:ansible /app/applications"
               }
             }
@@ -145,7 +199,7 @@
               }
             },
             "commands" : {
-              "1_create_tag_export_file" : {
+              "create_tag_export_file" : {
                 "command" : "/usr/local/bin/ec2_tags.sh"
               },
             }
@@ -183,9 +237,9 @@
       "Type" : "AWS::AutoScaling::AutoScalingGroup",
       "UpdatePolicy" : {
         "AutoScalingRollingUpdate" : {
-          "MinInstancesInService" : "0",
+          "MinInstancesInService" : "1",
           "MaxBatchSize" : "1",
-          "PauseTime" : "PT3M",
+          "PauseTime" : "PT2M",
           "WaitOnResourceSignals" : "true"
         }
       },
@@ -207,11 +261,46 @@
     "WebserverLaunchConfig" : {
       "Type" : "AWS::AutoScaling::LaunchConfiguration",
       "Metadata" : {
-        "Comment1" : "Configure the bootstrap helpers to install pip and ansible",
+        "Comment1" : "Bootstrap webserver server. Make use of cfn helper scripts for updates and bespoke tag display tool. Update all packages for security patches. Bootstrap apache user with ansible key.",
 
         "AWS::CloudFormation::Init" : {
           "configSets" : {
-            "Install" : [ "BasePackages", "ApacheSetup", "TagTool" ]
+            "Install" : [ "HelperScripts", "BasePackages", "ApacheSetup", "TagTool" ]
+          },
+          "HelperScripts" : {
+            "files" : {
+              "/etc/cfn/cfn-hup.conf" : {
+                "content" : { "Fn::Join" : ["", [
+                  "[main]\n",
+                  "stack=", { "Ref" : "AWS::StackId" }, "\n",
+                  "region=", { "Ref" : "AWS::Region" }, "\n",
+                  "interval=5\n"
+                ]]},
+                "mode"    : "000400",
+                "owner"   : "root",
+                "group"   : "root"
+              },
+              "/etc/cfn/hooks.d/cfn-auto-reloader.conf" : {
+                "content": { "Fn::Join" : ["", [
+                  "[cfn-auto-reloader-hook]\n",
+                  "triggers=post.update\n",
+                  "path=Resources.WebserverLaunchConfig.Metadata.AWS::CloudFormation::Init\n",
+                  "action=/opt/aws/bin/cfn-init -v ",
+                  "         --stack ", { "Ref" : "AWS::StackName" },
+                  "         --configsets Install ",
+                  "         --resource WebserverLaunchConfig ",
+                  "         --region ", { "Ref" : "AWS::Region" }, "\n",
+                  "runas=root\n"
+                ]]}
+              }
+            },
+            "services" : {
+              "sysvinit" : {
+                "cfn-hup" : { "enabled" : "true", "ensureRunning" : "true",
+                  "files" : ["/etc/cfn/cfn-hup.conf", "/etc/cfn/hooks.d/cfn-auto-reloader.conf"]
+                }
+              }
+            }
           },
           "BasePackages" : {
             "commands" : {
@@ -230,7 +319,7 @@
               }
             },
             "commands" : {
-              "1_create_tag_export_file" : {
+              "create_tag_export_file" : {
                 "command" : "/usr/local/bin/ec2_tags.sh"
               },
             }
@@ -238,20 +327,22 @@
           "ApacheSetup" : {
             "commands" : {
               "1_create_apache_user" : {
-                "command" : "useradd -m apache"
+                "command" : "useradd -m apache",
+                "test" : "test -n grep apache /etc/passwd"
               },
               "2_add_ec2-user_to_apache_group" : {
                 "command" : "usermod -a -G apache ec2-user"
               },
-              "4_make_ssh_directory_for_ansible" : {
-                "command" : "su apache -c 'mkdir /home/apache/.ssh'"
+              "3_make_ssh_directory_for_ansible" : {
+                "command" : "su apache -c 'mkdir /home/apache/.ssh'",
+                "test" : "test ! -e /home/apache/.ssh"
               },
-              "5_set_file_permissions_of_ansible_ssh_directory" : {
+              "4_set_file_permissions_of_ansible_ssh_directory" : {
                 "command" : "su apache -c 'chmod 700 /home/apache/.ssh'"
               },
-              "6_get_ansible_pub_key" : {
-                "command" : "su apache -c 'aws ssm get-parameter --name \"/Ansible/HelloWorld/$env_var/public_key\" --with-decryption --query Parameter.Value --output text --region `curl -s http://169.254.169.254/latest/dynamic/instance-identity/document | grep region | cut -f4 -d \"\\\"\"` >> /home/apache/.ssh/authorized_keys'",
-                "env" : { "env_var" : { "Ref" : "Environment"} }
+              "5_get_latest_ansible_pub_key" : {
+                "command" : "su apache -c 'aws ssm get-parameter --name \"/Ansible/HelloWorld/$env_var/public_key\" --with-decryption --query Parameter.Value --output text --region `curl -s http://169.254.169.254/latest/dynamic/instance-identity/document | grep region | cut -f4 -d \"\\\"\"` > /home/apache/.ssh/authorized_keys'",
+                "env" : { "env_var" : { "Ref" : "Environment"} },
               }
             }
           }
@@ -276,21 +367,24 @@
            "         --configsets Install ",
            "         --region ", { "Ref" : "AWS::Region" }, "\n",
 
+           "# Start up the cfn-hup daemon to listen for changes to the Web Server metadata\n",
+           "/opt/aws/bin/cfn-hup || error_exit 'Failed to start cfn-hup'\n",
+
            "# Signal the status from cfn-init\n",
            "/opt/aws/bin/cfn-signal -e $? ",
            "         --stack ", { "Ref" : "AWS::StackName" },
-           "         --resource WebserverControllerGroup ",
+           "         --resource WebserverGroup ",
            "         --region ", { "Ref" : "AWS::Region" }, "\n"
         ]]}}
       }
     },
-    "WebserverControllerGroup": {
+    "WebserverGroup": {
       "Type" : "AWS::AutoScaling::AutoScalingGroup",
       "UpdatePolicy" : {
         "AutoScalingRollingUpdate" : {
-          "MinInstancesInService" : "0",
+          "MinInstancesInService" : "1",
           "MaxBatchSize" : "1",
-          "PauseTime" : "PT3M",
+          "PauseTime" : "PT2M",
           "WaitOnResourceSignals" : "true"
         }
       },
