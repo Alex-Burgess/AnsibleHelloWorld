@@ -1,12 +1,8 @@
 # AnsibleHelloWorld
 For an overview of this project and other helpful snippets see the [Wiki](https://github.com/Alex-Burgess/AnsibleHelloWorld/wiki).
 
-## Build procedure
-1. [Build AMIs](https://github.com/Alex-Burgess/AnsibleHelloWorld/wiki/AMICreation)
-1. Update cloudformation/main_params.json and [build stack](https://github.com/Alex-Burgess/AnsibleHelloWorld/wiki/BuildStack)
-1. Update AnsibleHelloWorld inventory hosts files with AWS stack ips
-1. Copy Ansible and Application files to Ansible controllers [Ansible Environment Setup](https://github.com/Alex-Burgess/AnsibleHelloWorld/wiki/AnsibleEnvironmentSetup)
-1. Test Ansible and execute playbook to build environment [Useful Ansible Commands](https://github.com/Alex-Burgess/AnsibleHelloWorld/wiki/UsefulAnsibleCommands)
-
-## POC Demonstration:
-[Test Cases](https://github.com/Alex-Burgess/AnsibleHelloWorld/wiki/PocTestCases)
+# Build steps
+1. Add keys to parameter store - [steps](https://github.com/Alex-Burgess/AnsibleHelloWorld/wiki/AddKeysToParameterStore)
+1. Create cloudformation stack that builds vpc, sgs, iam and instances for ansible controllers and webservers - [Build Stack](https://github.com/Alex-Burgess/AnsibleHelloWorld/wiki/BuildStack)
+1. Deploy ansible environment - [Deploy](https://github.com/Alex-Burgess/AnsibleHelloWorld/wiki/AnsibleEnvironmentSetup)
+1. Operate webserver environment (Run playbooks) - [Operate](https://github.com/Alex-Burgess/AnsibleHelloWorld/wiki/UsefulAnsibleCommands)
