@@ -1,8 +1,6 @@
 ---
 - name: Content
   hosts: webservers
-  become: true
-  become_user: apache
   tasks:
   - name: Create html directory for hellworld.com
     file: path=/var/www/html/helloworld.com/html state=directory

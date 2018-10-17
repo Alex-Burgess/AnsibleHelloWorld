@@ -145,10 +145,13 @@
             "TimeoutInMinutes": 5,
             "Parameters": {
                "AppName": { "Ref": "AppName" },
+               "MainStackName" : { "Ref" : "AWS::StackName" },
                "Environment": "prod",
                "InstanceKeyName" : { "Ref" : "InstanceKeyName"},
+               "VpcId": { "Fn::GetAtt" : ["VPCStack", "Outputs.VpcId"] },
                "SubnetIDs": { "Fn::GetAtt" : ["VPCStack", "Outputs.SubnetIds"] },
                "SecurityGroupIDs": { "Fn::GetAtt" : ["SGStack", "Outputs.BaseSG"] },
+               "LoadBalancerSecurityGroupID": {"Fn::GetAtt" : ["SGStack", "Outputs.WebserverHttpSG"]},
                "InstanceTypeParameter": { "Ref": "InstanceTypeParameter"},
                "ImageID": { "Ref" : "ImageID"},
                "InstanceProfileName": { "Fn::GetAtt" : ["IAMStack", "Outputs.AnsibleHelloworldInstanceProfileName"] },
@@ -167,13 +170,16 @@
             "TimeoutInMinutes": 5,
             "Parameters": {
                "AppName": { "Ref": "AppName" },
+               "MainStackName" : { "Ref" : "AWS::StackName" },
                "Environment": "staging",
                "InstanceKeyName" : { "Ref" : "InstanceKeyName"},
+               "VpcId": { "Fn::GetAtt" : ["VPCStack", "Outputs.VpcId"] },
                "SubnetIDs": { "Fn::GetAtt" : ["VPCStack", "Outputs.SubnetIds"] },
                "SecurityGroupIDs": { "Fn::Join" : [",", [
                   {"Fn::GetAtt" : ["SGStack", "Outputs.BaseSG"]},
                   {"Fn::GetAtt" : ["SGStack", "Outputs.WebserverHttpSG"]}
                ]]},
+               "LoadBalancerSecurityGroupID": {"Fn::GetAtt" : ["SGStack", "Outputs.WebserverHttpSG"]},
                "InstanceTypeParameter": { "Ref": "InstanceTypeParameter"},
                "ImageID": { "Ref" : "ImageID"},
                "InstanceProfileName": { "Fn::GetAtt" : ["IAMStack", "Outputs.AnsibleHelloworldInstanceProfileName"] },
@@ -192,13 +198,16 @@
             "TimeoutInMinutes": 5,
             "Parameters": {
                "AppName": { "Ref": "AppName" },
+               "MainStackName" : { "Ref" : "AWS::StackName" },
                "Environment": "test",
                "InstanceKeyName" : { "Ref" : "InstanceKeyName"},
+               "VpcId": { "Fn::GetAtt" : ["VPCStack", "Outputs.VpcId"] },
                "SubnetIDs": { "Fn::GetAtt" : ["VPCStack", "Outputs.SubnetIds"] },
                "SecurityGroupIDs": { "Fn::Join" : [",", [
                   {"Fn::GetAtt" : ["SGStack", "Outputs.BaseSG"]},
                   {"Fn::GetAtt" : ["SGStack", "Outputs.WebserverHttpSG"]}
                ]]},
+               "LoadBalancerSecurityGroupID": {"Fn::GetAtt" : ["SGStack", "Outputs.WebserverHttpSG"]},
                "InstanceTypeParameter": { "Ref": "InstanceTypeParameter"},
                "ImageID": { "Ref" : "ImageID"},
                "InstanceProfileName": { "Fn::GetAtt" : ["IAMStack", "Outputs.AnsibleHelloworldInstanceProfileName"] },

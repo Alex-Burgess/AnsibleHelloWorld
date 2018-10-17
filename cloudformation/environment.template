@@ -10,12 +10,22 @@
       "AllowedPattern": "[a-zA-Z][a-zA-Z0-9-]*",
       "ConstraintDescription": "AppName must begin with a letter and contain alphanumeric characters, or a hyphen."
     },
+    "MainStackName" : {
+        "Type" : "String",
+        "Description" : "When used as a sub stack, can be used to enter the main stack name.  Otherwise this defaults to local stack name.",
+        "Default": "",
+        "MaxLength": 64,
+    },
     "Environment": {
       "Type" : "String",
       "AllowedValues" : ["prod", "staging", "test"],
       "Default" : "test",
       "Description" : "Enter the environment",
       "ConstraintDescription" : "Environment must be one of prod, uat, dev, or test"
+    },
+    "VpcId": {
+       "Type" : "AWS::EC2::VPC::Id",
+       "Description" : "VPC ID"
     },
     "SubnetIDs": {
        "Type" : "List<AWS::EC2::Subnet::Id>",
@@ -24,6 +34,10 @@
     "SecurityGroupIDs": {
       "Type" : "List<AWS::EC2::SecurityGroup::Id>",
       "Description" : "List of Security Group IDs"
+    },
+    "LoadBalancerSecurityGroupID": {
+      "Type" : "AWS::EC2::SecurityGroup::Id",
+      "Description" : "Security Group ID"
     },
     "InstanceTypeParameter" : {
       "Type" : "String",
@@ -129,7 +143,7 @@
             "commands" : {
               "1_create_ansible_user" : {
                 "command" : "useradd -m ansible",
-                "test" : "test -n grep ansible /etc/passwd"
+                "test" : "test -z `grep ansible /etc/passwd`"
               },
               "2_add_ec2-user_to_ansible_group" : {
                 "command" : "usermod -a -G ansible ec2-user"
@@ -325,10 +339,21 @@
             }
           },
           "ApacheSetup" : {
+            "files" : {
+              "/etc/sudoers.d/apache-sudo-privileges" : {
+                "content" : { "Fn::Join" : ["", [
+                  "## Allow apache user to run sudo commands as playbook hack\n",
+                  "apache ALL= NOPASSWD: ALL\n"
+                  ]]},
+                "mode": "000644",
+                "user": "root",
+                "group": "root"
+              }
+            },
             "commands" : {
               "1_create_apache_user" : {
                 "command" : "useradd -m apache",
-                "test" : "test -n grep apache /etc/passwd"
+                "test" : "test -z `grep apache /etc/passwd`"
               },
               "2_add_ec2-user_to_apache_group" : {
                 "command" : "usermod -a -G apache ec2-user"
@@ -395,6 +420,7 @@
         "DesiredCapacity" : { "Ref" : "WebserverDesiredCapacity" },
         "MaxSize" : { "Ref" : "WebserverDesiredCapacity" },
         "MinSize" : "1",
+        "TargetGroupARNs" : [ { "Ref" : "ALBTargetGroup" } ],
         "Tags": [
            { "Key" : "Name", "Value" : "HelloWorldWebserver", "PropagateAtLaunch" : true },
            { "Key" : "Application", "Value" : {"Ref" : "AppName" }, "PropagateAtLaunch" : true },
@@ -402,6 +428,57 @@
            { "Key" : "Type", "Value" : "Webserver", "PropagateAtLaunch" : true }
         ],
       }
+    },
+    "ApplicationLoadBalancer" : {
+      "Type" : "AWS::ElasticLoadBalancingV2::LoadBalancer",
+      "Properties" : {
+        "Name" : { "Fn::Sub": [ "${stack}-${env}-lb", { "stack": { "Ref" : "MainStackName" }, "env": { "Ref" : "Environment" }} ] },
+        "Scheme" : "internet-facing",
+        "Subnets" : { "Ref": "SubnetIDs" },
+        "SecurityGroups" : [{"Ref": "LoadBalancerSecurityGroupID"}],
+        "Tags": [
+           { "Key" : "Name", "Value" : "HelloWorldWebserver" },
+           { "Key" : "Application", "Value" : {"Ref" : "AppName" } },
+           { "Key" : "Environment", "Value" : { "Ref" : "Environment" } },
+           { "Key" : "Type", "Value" : "Webserver" }
+         ]
+      }
+    },
+    "ALBTargetGroup" : {
+      "Type" : "AWS::ElasticLoadBalancingV2::TargetGroup",
+      "Properties" : {
+        "Name" : {"Fn::Join" : [ "-", [ { "Fn::GetAtt" : [ "ApplicationLoadBalancer", "LoadBalancerName" ] }, "tg" ] ]},
+        "HealthCheckIntervalSeconds" : 60,
+        "UnhealthyThresholdCount" : 10,
+        "HealthCheckPath" : "/",
+        "Port" : 80,
+        "Protocol" : "HTTP",
+        "VpcId" : { "Ref": "VpcId" },
+        "TargetGroupAttributes" : [
+          {
+            "Key" : "deregistration_delay.timeout_seconds",
+            "Value" : "60"
+          }
+        ]
+      }
+    },
+    "ALBListener" : {
+      "Type" : "AWS::ElasticLoadBalancingV2::Listener",
+      "Properties" : {
+        "DefaultActions" : [{
+          "Type" : "forward",
+          "TargetGroupArn" : { "Ref" : "ALBTargetGroup" }
+        }],
+        "LoadBalancerArn" : { "Ref" : "ApplicationLoadBalancer" },
+        "Port" : 80,
+        "Protocol" : "HTTP"
+      }
+    }
+  },
+  "Outputs" : {
+    "URL" : {
+      "Description" : "The URL of the website",
+      "Value" :  { "Fn::Join" : [ "", [ "http://", { "Fn::GetAtt" : [ "ApplicationLoadBalancer", "DNSName" ]}]]}
     }
   }
 }

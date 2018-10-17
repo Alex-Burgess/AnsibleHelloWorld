@@ -1,7 +1,7 @@
 ---
 - name: Configuration
   hosts: webservers
-  become: true
+  become: yes
   tasks:
   - name: Synchronize hellworld.com conf directory
     synchronize:
@@ -9,7 +9,8 @@
       dest: /etc/httpd/conf/
       delete: yes
       recursive: yes
-    register: conf_directory
-  - name: Restart httpd instance if configuration updates were made
+    notify:
+      - restart apache
+  handlers:
+  - name: restart apache
     service: name=httpd state=restarted
-    when: conf_directory.changed
