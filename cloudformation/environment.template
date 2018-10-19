@@ -168,7 +168,8 @@
                 "env" : { "env_var" : { "Ref" : "Environment"} }
               },
               "8_set_file_permisions_for_ansible_private_key" : {
-                "command" : "su ansible -c 'chmod 400 /home/ansible/.ssh/ansible_test'"
+                "command" : "su ansible -c 'chmod 400 /home/ansible/.ssh/ansible_$env_var'",
+                "env" : { "env_var" : { "Ref" : "Environment"} },
               }
             }
           },
