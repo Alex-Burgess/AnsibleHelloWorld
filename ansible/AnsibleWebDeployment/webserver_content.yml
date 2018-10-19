@@ -1,0 +1,38 @@
+---
+- name: Content
+  hosts: webservers
+  tasks:
+  - name: Create content source directory for hellworld.com
+    file: path=/var/www/html/helloworld.com/html state=directory
+  - name: Synchronize all hellworld.com content
+    synchronize:
+      src: /app/applications/helloworld.com/httpContent/html
+      dest: /var/www/html/helloworld.com
+      delete: yes
+      recursive: yes
+  - name: Create configuration directory
+    file: path=/var/www/html/helloworld.com/config state=directory
+  - name: Copy production application config file if production inventory file
+    copy:
+      src: /app/applications/helloworld.com/httpContent/config/app.ini.prod
+      dest: /var/www/html/helloworld.com/config/app.ini
+      owner: apache
+      group: apache
+      mode: 0644
+    when: ( 'PROD' in inventory_file )
+  - name: Copy staging application config file if staging inventory file
+    copy:
+      src: /app/applications/helloworld.com/httpContent/config/app.ini.staging
+      dest: /var/www/html/helloworld.com/config/app.ini
+      owner: apache
+      group: apache
+      mode: 0644
+    when: ( 'STAGING' in inventory_file )
+  - name: Copy test application config file if test inventory file
+    copy:
+      src: /app/applications/helloworld.com/httpContent/config/app.ini.test
+      dest: /var/www/html/helloworld.com/config/app.ini
+      owner: apache
+      group: apache
+      mode: 0644
+    when: ( 'TEST' in inventory_file )

@@ -10,6 +10,12 @@
           "AllowedPattern": "[a-zA-Z][a-zA-Z0-9-]*",
           "ConstraintDescription": "AppName must begin with a letter and contain alphanumeric characters, or a hyphen."
       },
+      "MainStackName" : {
+          "Type" : "String",
+          "Description" : "When used as a sub stack, can be used to enter the main stack name.  Otherwise this defaults to local stack name.",
+          "Default": "",
+          "MaxLength": 64,
+      },
       "VpcID": {
          "Type" : "AWS::EC2::VPC::Id",
          "Description" : "VPC ID"
@@ -24,7 +30,7 @@
             "Tags": [
                {
                   "Key" : "Name",
-                  "Value" : { "Fn::Sub": [ "${app}-base-sg", { "app": {"Ref" : "AppName" }} ] }
+                  "Value" : { "Fn::Sub": [ "${app}-base-sg", { "app": {"Ref" : "MainStackName" }} ] }
                },
                {
                   "Key" : "Application",
@@ -74,7 +80,7 @@
             "Tags": [
                {
                   "Key" : "Name",
-                  "Value" : { "Fn::Sub": [ "${app}-webserver-sg", { "app": {"Ref" : "AppName" }} ] }
+                  "Value" : { "Fn::Sub": [ "${app}-webserver-sg", { "app": {"Ref" : "MainStackName" }} ] }
                },
                {
                   "Key" : "Application",

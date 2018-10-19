@@ -1,7 +1,7 @@
 [
    {
       "ParameterKey": "AppName",
-      "ParameterValue": "AnsibleHelloWorld"
+      "ParameterValue": "AnsibleWebDemo1"
    },
    {
       "ParameterKey": "VpcCidrBlock",

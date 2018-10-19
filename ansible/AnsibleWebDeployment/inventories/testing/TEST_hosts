@@ -1,6 +1,6 @@
 [webservers]
-10.0.1.185
-10.0.0.95
+10.0.0.253
+10.0.2.44
 
 [webservers:vars]
 ansible_ssh_user=apache

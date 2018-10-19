@@ -121,6 +121,7 @@
          "Properties": {
             "Parameters": {
                "AppName": { "Ref": "AppName" },
+               "MainStackName": { "Ref" : "AWS::StackName" },
                "VpcID": { "Fn::GetAtt" : ["VPCStack", "Outputs.VpcId"] }
             },
             "TemplateURL": "https://s3.amazonaws.com/alex-demo-files/cf-templates/ansible-hello-world/security-groups.template",
