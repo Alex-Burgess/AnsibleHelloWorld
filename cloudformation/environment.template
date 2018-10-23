@@ -252,7 +252,7 @@
       "Type" : "AWS::AutoScaling::AutoScalingGroup",
       "UpdatePolicy" : {
         "AutoScalingRollingUpdate" : {
-          "MinInstancesInService" : "1",
+          "MinInstancesInService" : "0",
           "MaxBatchSize" : "1",
           "PauseTime" : "PT2M",
           "WaitOnResourceSignals" : "true"
@@ -264,7 +264,7 @@
         "LaunchConfigurationName" : { "Ref" : "AnsibleLaunchConfig" },
         "DesiredCapacity" : { "Ref" : "AnsibleControllerDesiredCapacity" },
         "MaxSize" : { "Ref" : "AnsibleControllerDesiredCapacity" },
-        "MinSize" : "1",
+        "MinSize" : "0",
         "Tags": [
            { "Key" : "Name", "Value" : "AnsibleController", "PropagateAtLaunch" : true },
            { "Key" : "Application", "Value" : {"Ref" : "AppName" }, "PropagateAtLaunch" : true },

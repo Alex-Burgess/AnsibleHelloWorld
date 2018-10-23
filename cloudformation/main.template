@@ -8,7 +8,8 @@
           "MinLength": 1,
           "MaxLength": 64,
           "AllowedPattern": "[a-zA-Z][a-zA-Z0-9-]*",
-          "ConstraintDescription": "AppName must begin with a letter and contain alphanumeric characters, or a hyphen."
+          "ConstraintDescription": "AppName must begin with a letter and contain alphanumeric characters, or a hyphen.",
+          "Default": "AnsibleWebDemo1"
       },
       "VpcCidrBlock": {
          "Type": "String",
@@ -24,7 +25,8 @@
       },
       "ImageID": {
          "Type" : "AWS::EC2::Image::Id",
-         "Description" : "Enter AMI for instance"
+         "Description" : "Enter AMI for instance",
+         "Default": "ami-0eafb5ee12a2cbffc" 
       },
       "SpotPrice" : {
          "Type" : "String",
@@ -35,7 +37,7 @@
         "Type" : "String",
         "Description" : "Choose one of OnDemand or Spot",
         "AllowedValues" : ["OnDemand", "Spot"],
-        "Default" : "Spot"
+        "Default" : "OnDemand"
       },
       "InstanceKeyName" : {
          "Type" : "String",
@@ -90,7 +92,7 @@
       },
       "TestAnsibleControllerDesiredCapacity" : {
         "Type" : "String",
-        "Default" : "2",
+        "Default" : "1",
         "Description" : "Enter the number of ansible controller instances required."
       },
       "TestWebserverDesiredCapacity" : {
