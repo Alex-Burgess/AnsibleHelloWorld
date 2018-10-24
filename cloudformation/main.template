@@ -26,7 +26,7 @@
       "ImageID": {
          "Type" : "AWS::EC2::Image::Id",
          "Description" : "Enter AMI for instance",
-         "Default": "ami-0eafb5ee12a2cbffc" 
+         "Default": "ami-0eafb5ee12a2cbffc"
       },
       "SpotPrice" : {
          "Type" : "String",
@@ -226,6 +226,20 @@
       "VpcId" : {
          "Description" : "VPC ID",
          "Value": { "Fn::GetAtt" : ["VPCStack", "Outputs.VpcId"]}
+      },
+      "TestStackLB" : {
+        "Description" : "Test Stack LB URL",
+        "Value": { "Fn::GetAtt" : ["TestStack", "Outputs.URL"] }
+      },
+      "StagingStackLB" : {
+        "Condition" : "CreateStagingResources",
+        "Description" : "Staging Stack LB URL",
+        "Value": { "Fn::GetAtt" : ["StagingStack", "Outputs.URL"] }
+      },
+      "ProdStackLB" : {
+        "Condition" : "CreateProdResources",
+        "Description" : "Prod Stack LB URL",
+        "Value": { "Fn::GetAtt" : ["ProdStack", "Outputs.URL"] }
       }
    }
 }

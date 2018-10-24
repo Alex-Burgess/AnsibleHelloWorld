@@ -1,6 +1,7 @@
 ---
 - name: Content
   hosts: webservers
+  serial: "{{ rolling_update_var | default('1') }}"
   tasks:
   - name: Create content source directory for hellworld.com
     file: path=/var/www/html/helloworld.com/html state=directory

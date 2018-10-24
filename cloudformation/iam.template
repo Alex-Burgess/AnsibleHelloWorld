@@ -49,6 +49,28 @@
           ]
         }
       },
+      "DynamicInventoryPolicy" : {
+        "Type" : "AWS::IAM::Policy",
+        "Properties" : {
+          "PolicyName" : "DescribeEC2TagsPolicy",
+          "PolicyDocument" : {
+            "Statement" : [
+              {
+                "Effect" : "Allow",
+                "Action" : [
+                  "ec2:Describe*"
+                ],
+                "Resource" : "*"
+              }
+            ]
+          },
+          "Roles" : [
+            {
+              "Ref" : "AnsibleHelloworldEC2Role"
+            }
+          ]
+        }
+      },
       "GetSsmParamsPolicy" : {
         "Type" : "AWS::IAM::Policy",
         "Properties" : {

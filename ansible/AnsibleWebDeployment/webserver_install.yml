@@ -1,6 +1,7 @@
 ---
 - name: Installation
   hosts: webservers
+  serial: "{{ rolling_update_var | default('1') }}"
   become: yes
   tasks:
   - name: Install Apache

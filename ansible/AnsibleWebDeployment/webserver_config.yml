@@ -1,6 +1,7 @@
 ---
 - name: Configuration
   hosts: webservers
+  serial: "{{ rolling_update_var | default('1') }}"
   become: yes
   tasks:
   - name: Synchronize hellworld.com conf directory
