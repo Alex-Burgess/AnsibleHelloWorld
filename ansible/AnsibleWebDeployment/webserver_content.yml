@@ -1,11 +1,11 @@
 ---
 - name: Content
-  hosts: "{{ dynamic_tag_var | default('webservers') }}" 
+  hosts: "{{ dynamic_tag_var | default('webservers') }}"
   serial: "{{ rolling_update_var | default('1') }}"
   tasks:
-  - name: Create content source directory for hellworld.com
+  - name: Create content source directory for helloworld.com
     file: path=/var/www/html/helloworld.com/html state=directory
-  - name: Synchronize all hellworld.com content
+  - name: Synchronize all helloworld.com content
     synchronize:
       src: /app/applications/helloworld.com/httpContent/html
       dest: /var/www/html/helloworld.com
@@ -20,7 +20,7 @@
       owner: apache
       group: apache
       mode: 0644
-    when: ( 'PROD' in inventory_file )
+    when: ( 'prod' in inventory_file ) or ( 'prod' in dynamic_tag_var|string )
   - name: Copy staging application config file if staging inventory file
     copy:
       src: /app/applications/helloworld.com/httpContent/config/app.ini.staging
@@ -28,7 +28,7 @@
       owner: apache
       group: apache
       mode: 0644
-    when: ( 'STAGING' in inventory_file )
+    when: ( 'staging' in inventory_file ) or ( 'staging' in dynamic_tag_var|string )
   - name: Copy test application config file if test inventory file
     copy:
       src: /app/applications/helloworld.com/httpContent/config/app.ini.test
@@ -36,4 +36,4 @@
       owner: apache
       group: apache
       mode: 0644
-    when: ( 'TEST' in inventory_file )
+    when: ( 'test' in inventory_file ) or ( 'test' in dynamic_tag_var|string )

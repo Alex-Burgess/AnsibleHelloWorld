@@ -1,12 +1,12 @@
-[eu-west-1a]
+[eu-west-1a-webservers]
 10.0.0.123
 
-[eu-west-1b]
+[eu-west-1b-webservers]
 
-[eu-west-1c]
+[eu-west-1c-webservers]
 10.0.2.123
 
 [webservers:children]
-eu-west-1a
-eu-west-1b
-eu-west-1c
+eu-west-1a-webservers
+eu-west-1b-webservers
+eu-west-1c-webservers
