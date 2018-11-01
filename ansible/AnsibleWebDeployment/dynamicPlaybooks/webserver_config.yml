@@ -1,0 +1,17 @@
+---
+- name: Configuration
+  hosts: "{{ dynamic_tag_var | default('webservers') }}"
+  serial: "{{ rolling_update_var | default('1') }}"
+  become: yes
+  tasks:
+  - name: Synchronize hellworld.com conf directory
+    synchronize:
+      src: /app/applications/config/httpd/conf/
+      dest: /etc/httpd/conf/
+      delete: yes
+      recursive: yes
+    notify:
+      - restart apache
+  handlers:
+  - name: restart apache
+    service: name=httpd state=restarted

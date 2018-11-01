@@ -1,6 +1,6 @@
 ---
 - name: Installation
-  hosts: webservers
+  hosts: "{{ dynamic_tag_var | default('webservers') }}" 
   serial: "{{ rolling_update_var | default('1') }}"
   become: yes
   tasks:
@@ -12,5 +12,5 @@
     file: dest=/var/www owner=apache group=apache mode=0755 recurse=no
   - name: Change ownership of www directory to apache user and group
     file: dest=/var/www/html owner=apache group=apache mode=0755 recurse=no
-  - name: Change ownership of conf.d directory to apache user and group
-    file: dest=/etc/httpd/conf.d owner=apache group=apache recurse=no
+  - name: Start Apache
+    service: name=httpd state=started

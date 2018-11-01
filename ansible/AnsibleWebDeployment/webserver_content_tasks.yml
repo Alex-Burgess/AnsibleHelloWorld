@@ -1,0 +1,45 @@
+---
+- name: Create content source directory for {{ site }}
+  file: path=/var/www/html/{{ site }}/html state=directory
+- name: Synchronize all {{ site }} content
+  synchronize:
+    src: /app/applications/webfarmA/sites/{{ site }}/html
+    dest: /var/www/html/{{ site }}
+    delete: yes
+    recursive: yes
+- name: Create {{ site }} logs directory
+  file: path=/var/www/html/{{ site }}/logs state=directory
+- name: Create {{ site }} configuration directory
+  file: path=/var/www/html/{{ site }}/config state=directory
+- name: Synchronize {{ site }} configuration, excluding app.ini.
+  synchronize:
+    src: /app/applications/webfarmA/sites/{{ site }}/config
+    dest: /var/www/html/{{ site }}
+    delete: yes
+    recursive: yes
+    rsync_opts:
+      - "--exclude=app.ini*"
+- name: Copy {{ site }} production application config file if production inventory file
+  copy:
+    src: /app/applications/webfarmA/sites/{{ site }}/config/app.ini.prod
+    dest: /var/www/html/{{ site }}/config/app.ini
+    owner: apache
+    group: apache
+    mode: 0644
+  when: ( 'prod' in inventory_file )
+- name: Copy {{ site }} staging application config file if staging inventory file
+  copy:
+    src: /app/applications/webfarmA/sites/{{ site }}/config/app.ini.staging
+    dest: /var/www/html/{{ site }}/config/app.ini
+    owner: apache
+    group: apache
+    mode: 0644
+  when: ( 'staging' in inventory_file )
+- name: Copy {{ site }} test application config file if test inventory file
+  copy:
+    src: /app/applications/webfarmA/sites/{{ site }}/config/app.ini.test
+    dest: /var/www/html/{{ site }}/config/app.ini
+    owner: apache
+    group: apache
+    mode: 0644
+  when: ( 'test' in inventory_file )

@@ -1,10 +1,10 @@
 <?php
-  $ini = parse_ini_file($_SERVER['DOCUMENT_ROOT'] . '/config/app.ini', true);
+  $ini = parse_ini_file('config/app.ini', true);
   $app_configuration = $ini['MAIN'];
 ?>
 <html>
  <head>
-  <title>PHP Test (<?php echo $app_configuration['environmentName'] ?>)</title>
+  <title>HelloWorld (<?php echo $app_configuration['environmentName'] ?>)</title>
  </head>
  <body>
    <h1>HelloWorld (<?php echo $app_configuration['environmentName'] ?>)</h1>

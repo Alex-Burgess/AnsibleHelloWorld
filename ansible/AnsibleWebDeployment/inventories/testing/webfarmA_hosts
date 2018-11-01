@@ -1,10 +1,10 @@
 [eu-west-1a-webservers]
-10.0.0.147
+10.0.0.226
 
 [eu-west-1b-webservers]
+10.0.1.97
 
 [eu-west-1c-webservers]
-10.0.2.90
 
 [webservers:children]
 eu-west-1a-webservers

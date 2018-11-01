@@ -1,13 +1,21 @@
 ---
 - name: Configuration
-  hosts: "{{ dynamic_tag_var | default('webservers') }}" 
+  hosts: webservers
   serial: "{{ rolling_update_var | default('1') }}"
   become: yes
   tasks:
-  - name: Synchronize hellworld.com conf directory
+  - name: Synchronize web farm conf directory
     synchronize:
-      src: /app/applications/helloworld.com/httpConfiguration/httpd/conf/
+      src: /app/applications/webfarmA/config/httpd/conf/
       dest: /etc/httpd/conf/
+      delete: yes
+      recursive: yes
+    notify:
+      - restart apache
+  - name: Synchronize web farm conf.d directory
+    synchronize:
+      src: /app/applications/webfarmA/config/httpd/conf.d/
+      dest: /etc/httpd/conf.d/
       delete: yes
       recursive: yes
     notify:
