@@ -1,6 +1,6 @@
 ---
 - name: Configuration
-  hosts: webservers
+  hosts: "{{ dynamic_tag_var | default('webservers') }}" 
   serial: "{{ rolling_update_var | default('1') }}"
   become: yes
   tasks:

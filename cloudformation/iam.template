@@ -52,7 +52,7 @@
       "DynamicInventoryPolicy" : {
         "Type" : "AWS::IAM::Policy",
         "Properties" : {
-          "PolicyName" : "DescribeEC2TagsPolicy",
+          "PolicyName" : "DynamicInventoryPolicy",
           "PolicyDocument" : {
             "Statement" : [
               {

@@ -114,7 +114,7 @@
                "AppName": { "Ref": "AppName" },
                "VpcCidrBlock": { "Ref": "VpcCidrBlock"}
             },
-            "TemplateURL": "https://s3.amazonaws.com/alex-demo-files/cf-templates/ansible-hello-world/vpc.template",
+            "TemplateURL": "https://s3.amazonaws.com/ansible-hello-world/cloudformation/vpc.template",
             "TimeoutInMinutes": 5
          }
       },
@@ -126,7 +126,7 @@
                "MainStackName": { "Ref" : "AWS::StackName" },
                "VpcID": { "Fn::GetAtt" : ["VPCStack", "Outputs.VpcId"] }
             },
-            "TemplateURL": "https://s3.amazonaws.com/alex-demo-files/cf-templates/ansible-hello-world/security-groups.template",
+            "TemplateURL": "https://s3.amazonaws.com/ansible-hello-world/cloudformation/security-groups.template",
             "TimeoutInMinutes": 5
          }
       },
@@ -136,7 +136,7 @@
             "Parameters": {
               "MainStackName" : { "Ref" : "AWS::StackName" }
             },
-            "TemplateURL": "https://s3.amazonaws.com/alex-demo-files/cf-templates/ansible-hello-world/iam.template",
+            "TemplateURL": "https://s3.amazonaws.com/ansible-hello-world/cloudformation/iam.template",
             "TimeoutInMinutes": 5
          }
       },
@@ -144,7 +144,7 @@
          "Type": "AWS::CloudFormation::Stack",
          "Condition" : "CreateProdResources",
          "Properties": {
-            "TemplateURL": "https://s3.amazonaws.com/alex-demo-files/cf-templates/ansible-hello-world/environment.template",
+            "TemplateURL": "https://s3.amazonaws.com/ansible-hello-world/cloudformation/environment.template",
             "TimeoutInMinutes": 5,
             "Parameters": {
                "AppName": { "Ref": "AppName" },
@@ -169,7 +169,7 @@
          "Type": "AWS::CloudFormation::Stack",
          "Condition" : "CreateStagingResources",
          "Properties": {
-            "TemplateURL": "https://s3.amazonaws.com/alex-demo-files/cf-templates/ansible-hello-world/environment.template",
+            "TemplateURL": "https://s3.amazonaws.com/ansible-hello-world/cloudformation/environment.template",
             "TimeoutInMinutes": 5,
             "Parameters": {
                "AppName": { "Ref": "AppName" },
@@ -197,7 +197,7 @@
          "Type": "AWS::CloudFormation::Stack",
          "Condition" : "CreateTestResources",
          "Properties": {
-            "TemplateURL": "https://s3.amazonaws.com/alex-demo-files/cf-templates/ansible-hello-world/environment.template",
+            "TemplateURL": "https://s3.amazonaws.com/ansible-hello-world/cloudformation/environment.template",
             "TimeoutInMinutes": 5,
             "Parameters": {
                "AppName": { "Ref": "AppName" },
