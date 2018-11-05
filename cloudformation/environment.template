@@ -130,7 +130,8 @@
           "BasePackages" : {
             "packages" : {
               "yum" : {
-                "python2-pip" : []
+                "python2-pip" : [],
+                "git" : []
               }
             },
             "commands" : {
@@ -194,16 +195,6 @@
               },
               "5_set_ansible_dir_owner" : {
                 "command" : "chown ansible:ansible /app/ansible"
-              },
-              "6_create_applications_directory" : {
-                "command" : "mkdir /app/applications -m 775",
-                "test" : "test ! -e /app/applications"
-              },
-              "7_set_applications_dir_permissions" : {
-                "command" : "chmod 775 /app/applications"
-              },
-              "8_set_applications_dir_owner" : {
-                "command" : "chown ansible:ansible /app/applications"
               }
             }
           },

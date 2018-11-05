@@ -6,7 +6,7 @@
   tasks:
   - name: Synchronize web farm conf directory
     synchronize:
-      src: /app/applications/webfarmA/config/httpd/conf/
+      src: /tmp/git_checkout/webfarmA/config/httpd/conf/
       dest: /etc/httpd/conf/
       delete: yes
       recursive: yes
@@ -14,7 +14,7 @@
       - restart apache
   - name: Synchronize web farm conf.d directory
     synchronize:
-      src: /app/applications/webfarmA/config/httpd/conf.d/
+      src: /tmp/git_checkout/webfarmA/config/httpd/conf.d/
       dest: /etc/httpd/conf.d/
       delete: yes
       recursive: yes

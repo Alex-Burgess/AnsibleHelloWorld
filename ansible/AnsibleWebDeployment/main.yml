@@ -1,5 +1,6 @@
 ---
 - import_playbook: webserver_install.yml
+- import_playbook: get_webserver_files.yml
 - import_playbook: webserver_content.yml
 - import_playbook: webserver_config.yml
 - import_playbook: genericPlaybooks/start.yml

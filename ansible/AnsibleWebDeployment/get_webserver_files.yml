@@ -1,0 +1,9 @@
+- name: Get sites from git
+  hosts: 127.0.0.1
+  connection: local
+  tasks:
+    - name: get content from github for whole webfarm
+      git:
+        repo: https://github.com/Alex-Burgess/AnsibleHelloWorld.git
+        dest: /tmp/git_checkout
+        version: "{{ git_branch | default('master') }}"
