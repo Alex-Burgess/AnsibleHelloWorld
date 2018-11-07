@@ -415,7 +415,7 @@
         "DesiredCapacity" : { "Ref" : "WebserverDesiredCapacity" },
         "MaxSize" : { "Ref" : "WebserverDesiredCapacity" },
         "MinSize" : "1",
-        "TargetGroupARNs" : [ { "Ref" : "ALBTargetGroup" } ],
+        "TargetGroupARNs" : [ { "Ref" : "ALBTargetGroup" },  { "Ref" : "ALBMonitoringTargetGroup" } ],
         "Tags": [
            { "Key" : "Name", "Value" : "HelloWorldWebserver", "PropagateAtLaunch" : true },
            { "Key" : "Application", "Value" : {"Ref" : "AppName" }, "PropagateAtLaunch" : true },
@@ -457,6 +457,24 @@
         ]
       }
     },
+    "ALBMonitoringTargetGroup" : {
+      "Type" : "AWS::ElasticLoadBalancingV2::TargetGroup",
+      "Properties" : {
+        "Name" : {"Fn::Join" : [ "-", [ { "Fn::GetAtt" : [ "ApplicationLoadBalancer", "LoadBalancerName" ] }, "monitor", "tg" ] ]},
+        "HealthCheckIntervalSeconds" : 60,
+        "UnhealthyThresholdCount" : 10,
+        "HealthCheckPath" : "/",
+        "Port" : 8080,
+        "Protocol" : "HTTP",
+        "VpcId" : { "Ref": "VpcId" },
+        "TargetGroupAttributes" : [
+          {
+            "Key" : "deregistration_delay.timeout_seconds",
+            "Value" : "60"
+          }
+        ]
+      }
+    },
     "ALBListener" : {
       "Type" : "AWS::ElasticLoadBalancingV2::Listener",
       "Properties" : {
@@ -467,6 +485,21 @@
         "LoadBalancerArn" : { "Ref" : "ApplicationLoadBalancer" },
         "Port" : 80,
         "Protocol" : "HTTP"
+      }
+    },
+    "MonitorListenerRule": {
+      "Type": "AWS::ElasticLoadBalancingV2::ListenerRule",
+      "Properties": {
+        "Actions": [{
+          "Type": "forward",
+          "TargetGroupArn": { "Ref": "ALBMonitoringTargetGroup" }
+        }],
+        "Conditions": [{
+          "Field": "path-pattern",
+          "Values": [ "/monitoring/*" ]
+        }],
+        "ListenerArn": { "Ref": "ALBListener" },
+        "Priority": 1
       }
     }
   },
