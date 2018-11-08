@@ -1,11 +1,9 @@
 ---
-- name: Content
+- name: Deploy Content
   hosts: webservers
   serial: "{{ rolling_update_var | default('1') }}"
   tasks:
   - include_tasks: webserver_content_tasks.yml
-    with_items:
-      - helloworld.com
-      - monitoring.com
+    with_items: "{{ sites }}"
     loop_control:
       loop_var: site
