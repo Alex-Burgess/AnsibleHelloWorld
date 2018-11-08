@@ -19,27 +19,22 @@
     recursive: yes
     rsync_opts:
       - "--exclude=app.ini*"
-- name: Copy {{ site }} production application config file if production inventory file
-  copy:
-    src: /tmp/git_checkout/webfarmA/sites/{{ site }}/config/app.ini.prod
-    dest: /var/www/html/{{ site }}/config/app.ini
-    owner: apache
-    group: apache
-    mode: 0644
+- name: Set config path in prod
+  set_fact:
+    config_src_path: /tmp/git_checkout/webfarmA/sites/{{ site }}/config/app.ini.prod
   when: ( 'prod' in inventory_file )
-- name: Copy {{ site }} staging application config file if staging inventory file
-  copy:
-    src: /tmp/git_checkout/webfarmA/sites/{{ site }}/config/app.ini.staging
-    dest: /var/www/html/{{ site }}/config/app.ini
-    owner: apache
-    group: apache
-    mode: 0644
+- name: Set config path in staging
+  set_fact:
+    config_src_path: /tmp/git_checkout/webfarmA/sites/{{ site }}/config/app.ini.staging
   when: ( 'staging' in inventory_file )
-- name: Copy {{ site }} test application config file if test inventory file
+- name: Set config path in test
+  set_fact:
+    config_src_path: /tmp/git_checkout/webfarmA/sites/{{ site }}/config/app.ini.test
+  when: ( 'test' in inventory_file )
+- name: Copy {{ site }} application config file
   copy:
-    src: /tmp/git_checkout/webfarmA/sites/{{ site }}/config/app.ini.test
+    src: "{{ config_src_path }}"
     dest: /var/www/html/{{ site }}/config/app.ini
     owner: apache
     group: apache
     mode: 0644
-  when: ( 'test' in inventory_file )
