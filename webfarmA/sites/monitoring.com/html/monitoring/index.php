@@ -10,7 +10,7 @@
    <h1>Monitoring (<?php echo $app_configuration['environmentName'] ?>)</h1>
 
    <font>Contents of this site:</font>
-   <a href="mon_page1.html">Test page1</a>
-   <a href="mon_page2.html">Test page2</a>
+   <a href="mon_page1.html">Monitoring page1</a>
+   <a href="mon_page2.html">Monitoring page2</a>
  </body>
 </html>

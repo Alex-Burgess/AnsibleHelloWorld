@@ -427,7 +427,7 @@
     "ApplicationLoadBalancer" : {
       "Type" : "AWS::ElasticLoadBalancingV2::LoadBalancer",
       "Properties" : {
-        "Name" : { "Fn::Sub": [ "${stack}-${env}-lb", { "stack": { "Ref" : "MainStackName" }, "env": { "Ref" : "Environment" }} ] },
+        "Name" : { "Fn::Sub": [ "${stack}-${env}", { "stack": { "Ref" : "MainStackName" }, "env": { "Ref" : "Environment" }} ] },
         "Scheme" : "internet-facing",
         "Subnets" : { "Ref": "SubnetIDs" },
         "SecurityGroups" : [{"Ref": "LoadBalancerSecurityGroupID"}],
@@ -442,7 +442,7 @@
     "ALBTargetGroup" : {
       "Type" : "AWS::ElasticLoadBalancingV2::TargetGroup",
       "Properties" : {
-        "Name" : {"Fn::Join" : [ "-", [ { "Fn::GetAtt" : [ "ApplicationLoadBalancer", "LoadBalancerName" ] }, "tg" ] ]},
+        "Name" : {"Fn::Join" : [ "-", [ { "Fn::GetAtt" : [ "ApplicationLoadBalancer", "LoadBalancerName" ] } ] ]},
         "HealthCheckIntervalSeconds" : 60,
         "UnhealthyThresholdCount" : 10,
         "HealthCheckPath" : "/",
@@ -460,7 +460,7 @@
     "ALBMonitoringTargetGroup" : {
       "Type" : "AWS::ElasticLoadBalancingV2::TargetGroup",
       "Properties" : {
-        "Name" : {"Fn::Join" : [ "-", [ { "Fn::GetAtt" : [ "ApplicationLoadBalancer", "LoadBalancerName" ] }, "monitor", "tg" ] ]},
+        "Name" : {"Fn::Join" : [ "-", [ { "Fn::GetAtt" : [ "ApplicationLoadBalancer", "LoadBalancerName" ] }, "monitor" ] ]},
         "HealthCheckIntervalSeconds" : 60,
         "UnhealthyThresholdCount" : 10,
         "HealthCheckPath" : "/",

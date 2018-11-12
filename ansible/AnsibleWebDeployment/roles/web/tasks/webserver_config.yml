@@ -1,0 +1,19 @@
+---
+- name: Synchronize web farm conf directory
+  synchronize:
+    src: "{{ web_farm_httpd_path }}/conf/"
+    dest: /etc/httpd/conf/
+    delete: yes
+    recursive: yes
+  notify:
+    - restart apache
+  become: yes
+- name: Synchronize web farm conf.d directory
+  synchronize:
+    src: "{{ web_farm_httpd_path }}/conf.d/"
+    dest: /etc/httpd/conf.d/
+    delete: yes
+    recursive: yes
+  become: yes
+  notify:
+    - restart apache

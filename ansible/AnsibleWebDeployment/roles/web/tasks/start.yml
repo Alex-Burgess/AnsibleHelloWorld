@@ -1,0 +1,4 @@
+---
+- name: Start Apache
+  service: name=httpd state=started
+  become: yes

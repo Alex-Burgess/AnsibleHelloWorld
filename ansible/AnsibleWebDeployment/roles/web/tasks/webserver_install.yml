@@ -1,0 +1,16 @@
+---
+- name: Install Apache
+  yum: name=httpd state=present
+  become: yes
+- name: Install PHP
+  yum: name=php state=present
+  become: yes
+- name: Change ownership of www directory to apache user and group
+  file: dest=/var/www owner=apache group=apache mode=0755 recurse=no
+  become: yes
+- name: Change ownership of html directory to apache user and group
+  file: dest=/var/www/html owner=apache group=apache mode=0755 recurse=no
+  become: yes
+- name: Change ownership of conf.d directory to apache user and group
+  file: dest=/etc/httpd/conf.d owner=apache group=apache recurse=no
+  become: yes

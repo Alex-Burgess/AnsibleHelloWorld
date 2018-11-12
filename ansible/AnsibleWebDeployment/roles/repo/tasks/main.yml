@@ -1,0 +1,6 @@
+---
+- name: get content from github for whole webfarm
+  git:
+    repo: "{{ repo_remote }}"
+    dest: "{{ checkout_tmp_path }}"
+    version: "{{ git_branch | default('master') }}"

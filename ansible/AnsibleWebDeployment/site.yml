@@ -1,0 +1,11 @@
+- name: Get web content and configuration from repo files
+  hosts: localhost
+  roles:
+    - repo
+
+- name: Installation
+  hosts: webservers
+  #hosts: "{{ dynamic_tag_var | default('webservers') }}"
+  serial: "{{ rolling_update_var | default('1') }}"
+  roles:
+    - web

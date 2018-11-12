@@ -1,0 +1,5 @@
+---
+- include: webserver_install.yml
+- include: webserver_content.yml
+- include: webserver_config.yml
+- include: start.yml

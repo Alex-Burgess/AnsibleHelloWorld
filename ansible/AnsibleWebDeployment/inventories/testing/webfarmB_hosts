@@ -1,15 +1,15 @@
 [webservers:children]
-webfarmA
+webfarmB
 
-[webfarmA:children]
+[webfarmB:children]
 eu-west-1a-webservers
 eu-west-1b-webservers
 eu-west-1c-webservers
 
 [eu-west-1a-webservers]
-10.0.0.79
 
 [eu-west-1b-webservers]
+10.0.0.240
 
 [eu-west-1c-webservers]
-10.0.2.94
+10.0.2.142

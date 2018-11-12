@@ -1,0 +1,28 @@
+---
+- name: Create content source directory for {{ site }}
+  file: path=/var/www/html/{{ site }}/html state=directory
+- name: Synchronize all {{ site }} content
+  synchronize:
+    src: "{{ app_html_src_path }}"
+    dest: /var/www/html/{{ site }}
+    delete: yes
+    recursive: yes
+- name: Create {{ site }} logs directory
+  file: path=/var/www/html/{{ site }}/logs state=directory
+- name: Create {{ site }} configuration directory
+  file: path=/var/www/html/{{ site }}/config state=directory
+- name: Synchronize {{ site }} configuration, excluding app.ini.
+  synchronize:
+    src: "{{ app_config_src_path }}"
+    dest: /var/www/html/{{ site }}
+    delete: yes
+    recursive: yes
+    rsync_opts:
+      - "--exclude=app.ini*"
+- name: Copy {{ site }} application config file
+  copy:
+    src: "{{ app_config_app_ini_file }}"
+    dest: /var/www/html/{{ site }}/config/app.ini
+    owner: apache
+    group: apache
+    mode: 0644
