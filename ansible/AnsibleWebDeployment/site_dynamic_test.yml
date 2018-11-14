@@ -1,0 +1,23 @@
+# Current exection:
+# ansible-playbook -i ec2.py site_dynamic_test.yml -e "env=test webapp=AnsibleWebDemo webfarm=webfarmA"
+
+# Future Target playbook executions:
+# ansible-playbook -i ec2.py site_dynamic_test.yml -e "env=test webapp=webappA"
+# ansible-playbook -i ec2.py site_dynamic_test.yml -e "env=staging webapp=AnsibleWebDemo"
+# bring application and webfarm/webapp in line between cf and ansible.  (e.g. tag_Application_AnsibleWebDemo, to tag_WebApp_WebFarmA)
+# bring env_host_tag and environment in line between cf and ansible
+# hosts: tag_Environment_{{ env }}:&tag_Type_Webserver:&tag_WebApp_{{ webapp }}
+
+- name: Get web content and configuration from repo files
+  hosts: localhost
+  roles:
+    - repo
+
+- name: Installation
+  hosts: tag_Environment_{{ env }}:&tag_Type_Webserver:&tag_Application_{{ webapp }}
+  serial: "{{ rolling_update_var | default('2') }}"
+  vars_files:
+    - inventories/{{ env }}/group_vars/all.yml
+    - inventories/{{ env }}/group_vars/{{ webfarm }}.yml
+  roles:
+    - web
