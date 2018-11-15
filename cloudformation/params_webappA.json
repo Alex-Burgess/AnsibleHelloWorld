@@ -1,7 +1,7 @@
 [
    {
       "ParameterKey": "AppName",
-      "ParameterValue": "WebFarmB"
+      "ParameterValue": "webappA"
    },
    {
       "ParameterKey": "VpcCidrBlock",
