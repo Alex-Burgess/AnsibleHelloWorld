@@ -417,7 +417,8 @@
         "MinSize" : "1",
         "TargetGroupARNs" : [ { "Ref" : "ALBTargetGroup" },  { "Ref" : "ALBMonitoringTargetGroup" } ],
         "Tags": [
-           { "Key" : "Name", "Value" : "HelloWorldWebserver", "PropagateAtLaunch" : true },
+           { "Key" : "Name", "Value" : "Webserver", "PropagateAtLaunch" : true },
+           { "Key" : "WebApp", "Value" : {"Ref" : "AppName" }, "PropagateAtLaunch" : true },
            { "Key" : "Application", "Value" : {"Ref" : "AppName" }, "PropagateAtLaunch" : true },
            { "Key" : "Environment", "Value" : { "Ref" : "Environment" }, "PropagateAtLaunch" : true },
            { "Key" : "Type", "Value" : "Webserver", "PropagateAtLaunch" : true }
@@ -432,7 +433,7 @@
         "Subnets" : { "Ref": "SubnetIDs" },
         "SecurityGroups" : [{"Ref": "LoadBalancerSecurityGroupID"}],
         "Tags": [
-           { "Key" : "Name", "Value" : "HelloWorldWebserver" },
+           { "Key" : "Name", "Value" : {"Fn::Join" : [ "-", [ {"Ref" : "AppName" }, "Webserver" ] ]} },
            { "Key" : "Application", "Value" : {"Ref" : "AppName" } },
            { "Key" : "Environment", "Value" : { "Ref" : "Environment" } },
            { "Key" : "Type", "Value" : "Webserver" }

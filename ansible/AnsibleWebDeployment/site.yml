@@ -5,7 +5,6 @@
 
 - name: Installation
   hosts: webservers
-  #hosts: "{{ variable_host | default('webservers') }}"
-  serial: "{{ rolling_update_var | default('1') }}"
+  serial: "{{ rolling_update_var | default('2') }}"
   roles:
     - web

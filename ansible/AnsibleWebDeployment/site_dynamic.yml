@@ -1,0 +1,16 @@
+# Exection:
+# ansible-playbook -i ec2.py site_dynamic.yml -e "env=test webapp=webappA"
+
+- name: Get web content and configuration from repo files
+  hosts: localhost
+  roles:
+    - repo
+
+- name: Installation
+  hosts: tag_Environment_{{ env }}:&tag_Type_Webserver:&tag_Application_{{ webapp }}
+  serial: "{{ rolling_update_var | default('2') }}"
+  vars_files:
+    - inventories/{{ env }}/group_vars/all.yml
+    - inventories/{{ env }}/group_vars/{{ webapp }}.yml
+  roles:
+    - web
