@@ -3,8 +3,10 @@ sites:
   - helloworld.com
   - tools.com
 
-webapp_tmp_root_path: /tmp/git_checkout/webappB
-app_html_src_path: "{{ webapp_tmp_root_path }}/sites/{{ site }}/html"
-app_config_src_path: "{{ webapp_tmp_root_path }}/sites/{{ site }}/config"
+webapp_root_path: /tmp/git_checkout/webapps/webappB
+webapp_httpd_path: "{{ webapp_root_path }}/config/httpd"
+
+sites_root_path: /tmp/git_checkout/sites
+app_html_src_path: "{{ sites_root_path }}/{{ site }}/html"
+app_config_src_path: "{{ sites_root_path }}/{{ site }}/config"
 app_config_app_ini_file: "{{ app_config_src_path }}/app.ini.staging"
-web_farm_httpd_path: "{{ webapp_tmp_root_path }}/config/httpd"
