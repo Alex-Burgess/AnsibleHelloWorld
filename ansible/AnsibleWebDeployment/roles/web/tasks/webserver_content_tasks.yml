@@ -18,8 +18,13 @@
     owner: apache
     group: apache
     mode: 0644
+- name: Create version config file
+  copy:
+    content: "[MAIN]\nversion = {{ git_branch | default('master') }}"
+    dest: /var/www/html/{{ site }}/config/version.ini
+    force: no
 - name: Add version to config
   lineinfile:
-    path: /var/www/html/{{ site }}/config/app.ini
+    path: /var/www/html/{{ site }}/config/version.ini
     regexp: '^version = '
-    line: "version = {{ git_branch }}"
+    line: "version = {{ git_branch | default('master') }}"
