@@ -1,0 +1,9 @@
+---
+- name: Restart Apache
+  hosts: tag_Environment_{{ env }}:&tag_Type_Webserver:&tag_Application_{{ webapp }}
+  serial: "{{ rolling_update_var | default('2') }}"
+  vars_files:
+    - /app/ansible/AnsibleWebDeployment/inventories/{{ env }}/group_vars/all.yml
+  tasks:
+    - service: name=httpd state=restarted
+      become: yes
