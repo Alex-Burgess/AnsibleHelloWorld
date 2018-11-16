@@ -1,0 +1,15 @@
+[webservers:children]
+ansiblewebdemo
+
+[ansiblewebdemo:children]
+eu-west-1a-webservers
+eu-west-1b-webservers
+eu-west-1c-webservers
+
+[eu-west-1a-webservers]
+
+[eu-west-1b-webservers]
+10.0.1.239
+
+[eu-west-1c-webservers]
+10.0.2.237
