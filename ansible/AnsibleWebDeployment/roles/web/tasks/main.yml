@@ -3,3 +3,4 @@
 - include: webserver_content.yml
 - include: webserver_config.yml
 - include: start.yml
+- include: uri_test.yml

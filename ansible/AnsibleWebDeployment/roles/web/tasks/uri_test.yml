@@ -1,0 +1,17 @@
+---
+- name: Get public IP of instance
+  ec2_metadata_facts:
+
+- name: Output urls being checked
+  debug:
+    msg: Url http://{{ ansible_ec2_public_ipv4 }}/version.php
+
+- name: Checking can connect (GET) to a instance and is version page
+  uri:
+    url: http://{{ ansible_ec2_public_ipv4 }}/version.php
+    return_content: yes
+  register: webpage
+
+- name: Fail if Version is not in the page content
+  fail:
+  when: "'Version' not in webpage.content"
