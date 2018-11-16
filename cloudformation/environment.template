@@ -90,7 +90,7 @@
 
         "AWS::CloudFormation::Init" : {
           "configSets" : {
-            "Install" : [ "HelperScripts", "BasePackages", "AnsibleSetup", "AppDirs", "TagTool" ]
+            "Install" : [ "HelperScripts", "BasePackages", "AnsibleSetup", "AgentSetup", "AppDirs", "TagTool" ]
           },
           "HelperScripts" : {
             "files" : {
@@ -174,6 +174,45 @@
               },
               "9_Install boto module" : {
                 "command" : "su ansible -c 'pip install boto --user --no-cache-dir'"
+              }
+            }
+          },
+          "AgentSetup" : {
+            "files" : {
+              "/home/ansible/.bash_profile" : {
+                "content" : { "Fn::Join" : ["", [
+                  "# .bash_profile\n",
+                  "\n",
+                  "# Get the aliases and functions\n",
+                  "if [ -f ~/.bashrc ]; then\n",
+                  "	. ~/.bashrc\n",
+                  "fi\n",
+                  "\n",
+                  "# User specific environment and startup programs\n",
+                  "\n",
+                  "PATH=$PATH:$HOME/.local/bin:$HOME/bin\n",
+                  "\n",
+                  "export PATH\n",
+                  "\n",
+                  "if [ -z \"$SSH_AUTH_SOCK\" ] ; then\n",
+                  "  eval `ssh-agent -s`\n",
+                  "  ssh-add ~/.ssh/ansible*\n",
+                  "fi\n"
+                ]]},
+                "mode"    : "000644",
+                "owner"   : "ansible",
+                "group"   : "ansible"
+              },
+              "/home/ansible/.bash_logout" : {
+                "content" : { "Fn::Join" : ["", [
+                  "# Kill SSH Agent\n",
+                  "if [ -n \"$SSH_AUTH_SOCK\" ] ; then\n",
+                  "  eval `/usr/bin/ssh-agent -k`\n",
+                  "fi\n"
+                ]]},
+                "mode"    : "000644",
+                "owner"   : "ansible",
+                "group"   : "ansible"
               }
             }
           },
