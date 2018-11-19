@@ -7,7 +7,7 @@
     - repo
 
 - name: Installation
-  hosts: tag_Environment_{{ env }}:&tag_Type_Webserver:&tag_Application_{{ webapp }}
+  hosts: tag_Environment_{{ env }}:&tag_Type_Webserver:&tag_WebApp_{{ webapp }}
   serial: "{{ rolling_update_var | default('2') }}"
   vars_files:
     - inventories/{{ env }}/group_vars/all.yml

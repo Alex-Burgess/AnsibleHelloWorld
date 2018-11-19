@@ -11,6 +11,7 @@
  </head>
  <body>
    <h1>Version</h1>
+   <h3>Web Application Name: <?php echo $version_configuration['webapp'] ?></h3>
    <h3>Environment: <?php echo $app_configuration['environmentName'] ?></h3>
    <h3>Git branch/version: <?php echo $version_configuration['version'] ?></h3>
  </body>

@@ -2,19 +2,13 @@
    "AWSTemplateFormatVersion": "2010-09-09",
    "Description": "Creates security groups for Ansible test stack",
    "Parameters": {
-      "AppName" : {
+      "TagName" : {
           "Type" : "String",
           "Description" : "Enter the name for the application",
           "MinLength": 1,
           "MaxLength": 64,
           "AllowedPattern": "[a-zA-Z][a-zA-Z0-9-]*",
-          "ConstraintDescription": "AppName must begin with a letter and contain alphanumeric characters, or a hyphen."
-      },
-      "MainStackName" : {
-          "Type" : "String",
-          "Description" : "When used as a sub stack, can be used to enter the main stack name.  Otherwise this defaults to local stack name.",
-          "Default": "",
-          "MaxLength": 64,
+          "ConstraintDescription": "TagName must begin with a letter and contain alphanumeric characters, or a hyphen."
       },
       "VpcID": {
          "Type" : "AWS::EC2::VPC::Id",
@@ -30,12 +24,8 @@
             "Tags": [
                {
                   "Key" : "Name",
-                  "Value" : { "Fn::Sub": [ "${app}-base-sg", { "app": {"Ref" : "MainStackName" }} ] }
-               },
-               {
-                  "Key" : "Application",
-                  "Value" : { "Fn::Sub": [ "${app}", { "app": {"Ref" : "AppName" }} ] }
-               },
+                  "Value" : { "Fn::Sub": [ "${app}-SSH", { "app": {"Ref" : "TagName" }} ] }
+               }
             ]
          },
       },
@@ -80,23 +70,19 @@
             "Tags": [
                {
                   "Key" : "Name",
-                  "Value" : { "Fn::Sub": [ "${app}-webserver-sg", { "app": {"Ref" : "MainStackName" }} ] }
-               },
-               {
-                  "Key" : "Application",
-                  "Value" : { "Fn::Sub": [ "${app}", { "app": {"Ref" : "AppName" }} ] }
-               },
+                  "Value" : { "Fn::Sub": [ "${app}-Web", { "app": {"Ref" : "TagName" }} ] }
+               }
             ]
          }
       }
    },
    "Outputs" : {
       "BaseSG" : {
-         "Description" : "Base Securiy Group ID",
+         "Description" : "SSH Securiy Group ID",
          "Value" : { "Ref" : "BaseSG" }
       },
       "WebserverHttpSG" : {
-         "Description" : "Webserver Securiy Group ID",
+         "Description" : "Webserver Security Group ID",
          "Value" : { "Ref" : "WebserverHttpSG" }
       },
    }

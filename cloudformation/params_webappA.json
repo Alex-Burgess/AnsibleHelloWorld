@@ -1,11 +1,15 @@
 [
    {
-      "ParameterKey": "AppName",
+      "ParameterKey": "WebAppName",
       "ParameterValue": "webappA"
    },
    {
-      "ParameterKey": "VpcCidrBlock",
-      "ParameterValue": "10.0.0.0/16"
+      "ParameterKey": "Environment",
+      "ParameterValue": "test"
+   },
+   {
+      "ParameterKey": "BaseStackName",
+      "ParameterValue": "AnsibleDemo"
    },
    {
       "ParameterKey": "InstanceTypeParameter",
@@ -28,35 +32,7 @@
       "ParameterValue": "AlexMain"
    },
    {
-      "ParameterKey": "BuildProd",
-      "ParameterValue": "false"
-   },
-   {
-      "ParameterKey": "BuildStaging",
-      "ParameterValue": "false"
-   },
-   {
-      "ParameterKey": "ProdAnsibleControllerDesiredCapacity",
-      "ParameterValue": "2"
-   },
-   {
-      "ParameterKey": "ProdWebserverDesiredCapacity",
-      "ParameterValue": "6"
-   },
-   {
-      "ParameterKey": "StagingAnsibleControllerDesiredCapacity",
-      "ParameterValue": "2"
-   },
-   {
-      "ParameterKey": "StagingWebserverDesiredCapacity",
-      "ParameterValue": "2"
-   },
-   {
-      "ParameterKey": "TestAnsibleControllerDesiredCapacity",
-      "ParameterValue": "1"
-   },
-   {
-      "ParameterKey": "TestWebserverDesiredCapacity",
+      "ParameterKey": "WebserverDesiredCapacity",
       "ParameterValue": "2"
    }
 ]

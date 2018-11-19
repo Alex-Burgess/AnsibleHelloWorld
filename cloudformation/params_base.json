@@ -1,0 +1,46 @@
+[
+   {
+      "ParameterKey": "VpcCidrBlock",
+      "ParameterValue": "10.0.0.0/16"
+   },
+   {
+      "ParameterKey": "InstanceTypeParameter",
+      "ParameterValue": "t3.nano"
+   },
+   {
+      "ParameterKey": "ImageID",
+      "ParameterValue": "ami-0eafb5ee12a2cbffc"
+   },
+   {
+      "ParameterKey": "PurchaseOption",
+      "ParameterValue": "OnDemand"
+   },
+   {
+      "ParameterKey": "SpotPrice",
+      "ParameterValue": "0.0057"
+   },
+   {
+      "ParameterKey": "InstanceKeyName",
+      "ParameterValue": "AlexMain"
+   },
+   {
+      "ParameterKey": "BuildProdController",
+      "ParameterValue": "false"
+   },
+   {
+      "ParameterKey": "BuildStagingController",
+      "ParameterValue": "false"
+   },
+   {
+      "ParameterKey": "ProdAnsibleControllerDesiredCapacity",
+      "ParameterValue": "2"
+   },
+   {
+      "ParameterKey": "StagingAnsibleControllerDesiredCapacity",
+      "ParameterValue": "1"
+   },
+   {
+      "ParameterKey": "TestAnsibleControllerDesiredCapacity",
+      "ParameterValue": "1"
+   }
+]

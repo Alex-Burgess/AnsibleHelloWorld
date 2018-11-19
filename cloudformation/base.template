@@ -2,15 +2,6 @@
    "AWSTemplateFormatVersion": "2010-09-09",
    "Description": "Creates the full stack for the Ansible POC demonstration",
    "Parameters": {
-      "AppName" : {
-          "Type" : "String",
-          "Description" : "Enter the name for the application",
-          "MinLength": 1,
-          "MaxLength": 64,
-          "AllowedPattern": "[a-zA-Z][a-zA-Z0-9-]*",
-          "ConstraintDescription": "AppName must begin with a letter and contain alphanumeric characters, or a hyphen.",
-          "Default": "AnsibleWebDemo"
-      },
       "VpcCidrBlock": {
          "Type": "String",
          "AllowedPattern": "((\\d{1,3})\\.){3}\\d{1,3}/\\d{1,2}",
@@ -43,7 +34,7 @@
          "Type" : "String",
          "Description" : "Enter the name for the key used to ssh to ec2 instances."
       },
-      "BuildProd": {
+      "BuildProdController": {
          "AllowedValues": [
             "true",
             "false"
@@ -52,7 +43,7 @@
          "Description": "To build the production environment, set this parameter to true",
          "Type": "String"
       },
-      "BuildStaging": {
+      "BuildStagingController": {
          "AllowedValues": [
             "true",
             "false"
@@ -61,7 +52,7 @@
          "Description": "To build the staging environment, set this parameter to true",
          "Type": "String"
       },
-      "BuildTest": {
+      "BuildTestController": {
          "AllowedValues": [
             "true",
             "false"
@@ -73,45 +64,30 @@
       "ProdAnsibleControllerDesiredCapacity" : {
         "Type" : "String",
         "Default" : "2",
-        "Description" : "Enter the number of ansible controller instances required. Note - BuildProd must be set to true as well."
-      },
-      "ProdWebserverDesiredCapacity" : {
-        "Type" : "String",
-        "Default" : "2",
-        "Description" : "Enter the number of webserver instances required. Note - BuildProd must be set to true as well."
+        "Description" : "Enter the number of ansible controller instances required. Note - BuildProdController must be set to true as well."
       },
       "StagingAnsibleControllerDesiredCapacity" : {
         "Type" : "String",
         "Default" : "2",
-        "Description" : "Enter the number of ansible controller instances required. Note - BuildStaging must be set to true as well."
-      },
-      "StagingWebserverDesiredCapacity" : {
-        "Type" : "String",
-        "Default" : "2",
-        "Description" : "Enter the number of webserver instances required. Note - BuildStaging must be set to true as well."
+        "Description" : "Enter the number of ansible controller instances required. Note - BuildStagingController must be set to true as well."
       },
       "TestAnsibleControllerDesiredCapacity" : {
         "Type" : "String",
         "Default" : "1",
         "Description" : "Enter the number of ansible controller instances required."
-      },
-      "TestWebserverDesiredCapacity" : {
-        "Type" : "String",
-        "Default" : "2",
-        "Description" : "Enter the number of webserver instances required."
       }
    },
    "Conditions" : {
-      "CreateProdResources" : {"Fn::Equals" : [{"Ref" : "BuildProd"}, "true"]},
-      "CreateStagingResources" : {"Fn::Equals" : [{"Ref" : "BuildStaging"}, "true"]},
-      "CreateTestResources" : {"Fn::Equals" : [{"Ref" : "BuildTest"}, "true"]}
+      "CreateProdResources" : {"Fn::Equals" : [{"Ref" : "BuildProdController"}, "true"]},
+      "CreateStagingResources" : {"Fn::Equals" : [{"Ref" : "BuildStagingController"}, "true"]},
+      "CreateTestResources" : {"Fn::Equals" : [{"Ref" : "BuildTestController"}, "true"]}
    },
    "Resources": {
       "VPCStack": {
          "Type": "AWS::CloudFormation::Stack",
          "Properties": {
             "Parameters": {
-               "AppName": { "Ref": "AppName" },
+               "TagName": { "Ref": "AWS::StackName" },
                "VpcCidrBlock": { "Ref": "VpcCidrBlock"}
             },
             "TemplateURL": "https://s3.amazonaws.com/ansible-hello-world/cloudformation/vpc.template",
@@ -122,8 +98,7 @@
          "Type": "AWS::CloudFormation::Stack",
          "Properties": {
             "Parameters": {
-               "AppName": { "Ref": "AppName" },
-               "MainStackName": { "Ref" : "AWS::StackName" },
+               "TagName": { "Ref" : "AWS::StackName" },
                "VpcID": { "Fn::GetAtt" : ["VPCStack", "Outputs.VpcId"] }
             },
             "TemplateURL": "https://s3.amazonaws.com/ansible-hello-world/cloudformation/security-groups.template",
@@ -140,87 +115,75 @@
             "TimeoutInMinutes": 5
          }
       },
-      "ProdStack": {
+      "ProdAnsibleStack": {
          "Type": "AWS::CloudFormation::Stack",
          "Condition" : "CreateProdResources",
          "Properties": {
-            "TemplateURL": "https://s3.amazonaws.com/ansible-hello-world/cloudformation/environment.template",
+            "TemplateURL": "https://s3.amazonaws.com/ansible-hello-world/cloudformation/ansible.template",
             "TimeoutInMinutes": 5,
             "Parameters": {
-               "AppName": { "Ref": "AppName" },
-               "MainStackName" : { "Ref" : "AWS::StackName" },
+               "AppName": { "Ref" : "AWS::StackName" },
                "Environment": "prod",
                "InstanceKeyName" : { "Ref" : "InstanceKeyName"},
-               "VpcId": { "Fn::GetAtt" : ["VPCStack", "Outputs.VpcId"] },
                "SubnetIDs": { "Fn::GetAtt" : ["VPCStack", "Outputs.SubnetIds"] },
                "SecurityGroupIDs": { "Fn::Join" : [",", [
                   {"Fn::GetAtt" : ["SGStack", "Outputs.BaseSG"]},
                   {"Fn::GetAtt" : ["SGStack", "Outputs.WebserverHttpSG"]}
                ]]},
-               "LoadBalancerSecurityGroupID": {"Fn::GetAtt" : ["SGStack", "Outputs.WebserverHttpSG"]},
                "InstanceTypeParameter": { "Ref": "InstanceTypeParameter"},
                "ImageID": { "Ref" : "ImageID"},
                "InstanceProfileName": { "Fn::GetAtt" : ["IAMStack", "Outputs.AnsibleHelloworldInstanceProfileName"] },
                "SpotPrice" : { "Ref" : "SpotPrice" },
                "PurchaseOption" : { "Ref" : "PurchaseOption" },
                "AnsibleControllerDesiredCapacity" : { "Ref" : "ProdAnsibleControllerDesiredCapacity" },
-               "WebserverDesiredCapacity" : { "Ref" : "ProdWebserverDesiredCapacity" }
             }
          }
       },
-      "StagingStack": {
+      "StagingAnsibleStack": {
          "Type": "AWS::CloudFormation::Stack",
          "Condition" : "CreateStagingResources",
          "Properties": {
-            "TemplateURL": "https://s3.amazonaws.com/ansible-hello-world/cloudformation/environment.template",
+            "TemplateURL": "https://s3.amazonaws.com/ansible-hello-world/cloudformation/ansible.template",
             "TimeoutInMinutes": 5,
             "Parameters": {
-               "AppName": { "Ref": "AppName" },
-               "MainStackName" : { "Ref" : "AWS::StackName" },
+               "AppName": { "Ref" : "AWS::StackName" },
                "Environment": "staging",
                "InstanceKeyName" : { "Ref" : "InstanceKeyName"},
-               "VpcId": { "Fn::GetAtt" : ["VPCStack", "Outputs.VpcId"] },
                "SubnetIDs": { "Fn::GetAtt" : ["VPCStack", "Outputs.SubnetIds"] },
                "SecurityGroupIDs": { "Fn::Join" : [",", [
                   {"Fn::GetAtt" : ["SGStack", "Outputs.BaseSG"]},
                   {"Fn::GetAtt" : ["SGStack", "Outputs.WebserverHttpSG"]}
                ]]},
-               "LoadBalancerSecurityGroupID": {"Fn::GetAtt" : ["SGStack", "Outputs.WebserverHttpSG"]},
                "InstanceTypeParameter": { "Ref": "InstanceTypeParameter"},
                "ImageID": { "Ref" : "ImageID"},
                "InstanceProfileName": { "Fn::GetAtt" : ["IAMStack", "Outputs.AnsibleHelloworldInstanceProfileName"] },
                "SpotPrice" : { "Ref" : "SpotPrice" },
                "PurchaseOption" : { "Ref" : "PurchaseOption" },
                "AnsibleControllerDesiredCapacity" : { "Ref" : "StagingAnsibleControllerDesiredCapacity" },
-               "WebserverDesiredCapacity" : { "Ref" : "StagingWebserverDesiredCapacity" }
             }
          }
       },
-      "TestStack": {
+      "TestAnsibleStack": {
          "Type": "AWS::CloudFormation::Stack",
          "Condition" : "CreateTestResources",
          "Properties": {
-            "TemplateURL": "https://s3.amazonaws.com/ansible-hello-world/cloudformation/environment.template",
+            "TemplateURL": "https://s3.amazonaws.com/ansible-hello-world/cloudformation/ansible.template",
             "TimeoutInMinutes": 5,
             "Parameters": {
-               "AppName": { "Ref": "AppName" },
-               "MainStackName" : { "Ref" : "AWS::StackName" },
+               "AppName": { "Ref" : "AWS::StackName" },
                "Environment": "test",
                "InstanceKeyName" : { "Ref" : "InstanceKeyName"},
-               "VpcId": { "Fn::GetAtt" : ["VPCStack", "Outputs.VpcId"] },
                "SubnetIDs": { "Fn::GetAtt" : ["VPCStack", "Outputs.SubnetIds"] },
                "SecurityGroupIDs": { "Fn::Join" : [",", [
                   {"Fn::GetAtt" : ["SGStack", "Outputs.BaseSG"]},
                   {"Fn::GetAtt" : ["SGStack", "Outputs.WebserverHttpSG"]}
                ]]},
-               "LoadBalancerSecurityGroupID": {"Fn::GetAtt" : ["SGStack", "Outputs.WebserverHttpSG"]},
                "InstanceTypeParameter": { "Ref": "InstanceTypeParameter"},
                "ImageID": { "Ref" : "ImageID"},
-               "InstanceProfileName": { "Fn::GetAtt" : ["IAMStack", "Outputs.AnsibleHelloworldInstanceProfileName"] },
+               "InstanceProfileName": { "Fn::GetAtt" : ["IAMStack", "Outputs.AnsibleInstanceProfileName"] },
                "SpotPrice" : { "Ref" : "SpotPrice" },
                "PurchaseOption" : { "Ref" : "PurchaseOption" },
                "AnsibleControllerDesiredCapacity" : { "Ref" : "TestAnsibleControllerDesiredCapacity" },
-               "WebserverDesiredCapacity" : { "Ref" : "TestWebserverDesiredCapacity" }
             }
          }
       }
@@ -228,21 +191,31 @@
    "Outputs" : {
       "VpcId" : {
          "Description" : "VPC ID",
-         "Value": { "Fn::GetAtt" : ["VPCStack", "Outputs.VpcId"]}
+         "Value": { "Fn::GetAtt" : ["VPCStack", "Outputs.VpcId"]},
+         "Export": { "Name" : {"Fn::Sub": "${AWS::StackName}-VpcID" }}
       },
-      "TestStackLB" : {
-        "Description" : "Test Stack LB URL",
-        "Value": { "Fn::GetAtt" : ["TestStack", "Outputs.URL"] }
+      "SubnetIDs" : {
+        "Description" : "Subnet IDs",
+        "Value": { "Fn::GetAtt" : ["VPCStack", "Outputs.SubnetIds"] },
+        "Export": { "Name" : {"Fn::Sub": "${AWS::StackName}-SubnetIDs" }}
       },
-      "StagingStackLB" : {
-        "Condition" : "CreateStagingResources",
-        "Description" : "Staging Stack LB URL",
-        "Value": { "Fn::GetAtt" : ["StagingStack", "Outputs.URL"] }
+      "SecurityGroupIDs" : {
+        "Description" : "Security Group IDs",
+        "Value" : { "Fn::Join" : [",", [
+           {"Fn::GetAtt" : ["SGStack", "Outputs.BaseSG"]},
+           {"Fn::GetAtt" : ["SGStack", "Outputs.WebserverHttpSG"]}
+        ]]},
+        "Export": { "Name" : {"Fn::Sub": "${AWS::StackName}-SecurityGroupIDs" }}
       },
-      "ProdStackLB" : {
-        "Condition" : "CreateProdResources",
-        "Description" : "Prod Stack LB URL",
-        "Value": { "Fn::GetAtt" : ["ProdStack", "Outputs.URL"] }
+      "LoadBalancerSecurityGroupID" : {
+        "Description" : "Load Balancer Security Group ID",
+        "Value": {"Fn::GetAtt" : ["SGStack", "Outputs.WebserverHttpSG"]},
+        "Export": { "Name" : {"Fn::Sub": "${AWS::StackName}-LoadBalancerSecurityGroupID" }}
+      },
+      "IamInstanceProfileName" : {
+        "Description" : "IAM Instance Profile Name",
+        "Value": { "Fn::GetAtt" : ["IAMStack", "Outputs.AnsibleInstanceProfileName"] },
+        "Export": { "Name" : {"Fn::Sub": "${AWS::StackName}-IamInstanceProfileName" }}
       }
    }
 }

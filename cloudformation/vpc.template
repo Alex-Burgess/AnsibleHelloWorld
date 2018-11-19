@@ -2,13 +2,13 @@
    "AWSTemplateFormatVersion" : "2010-09-09",
    "Description": "Creates a VPC with public subnet.",
    "Parameters": {
-      "AppName" : {
+      "TagName" : {
           "Type" : "String",
           "Description" : "Enter the name for the application",
           "MinLength": 1,
           "MaxLength": 64,
           "AllowedPattern": "[a-zA-Z][a-zA-Z0-9-]*",
-          "ConstraintDescription": "AppName must begin with a letter and contain alphanumeric characters, or a hyphen."
+          "ConstraintDescription": "TagName must begin with a letter and contain alphanumeric characters, or a hyphen."
       },
       "VpcCidrBlock": {
          "Type": "String",
@@ -26,7 +26,7 @@
             "EnableDnsHostnames" : true,
             "InstanceTenancy" : "default",
             "Tags" : [
-               { "Key" : "Name", "Value" : { "Fn::Sub": [ "${app}", { "app": {"Ref" : "AppName" }} ] } }
+               { "Key" : "Name", "Value" : { "Fn::Sub": [ "${app}", { "app": {"Ref" : "TagName" }} ] } }
             ]
          }
       },
@@ -38,7 +38,7 @@
             "AvailabilityZone": { "Fn::Select" : [ "0", { "Fn::GetAZs" : "" } ] },
             "MapPublicIpOnLaunch": true,
             "Tags" : [
-               { "Key" : "Name", "Value" : { "Fn::Sub": [ "${app}", { "app": {"Ref" : "AppName" }} ] } }
+               { "Key" : "Name", "Value" : { "Fn::Sub": [ "${app}", { "app": {"Ref" : "TagName" }} ] } }
             ]
          }
       },
@@ -50,7 +50,7 @@
             "AvailabilityZone": { "Fn::Select" : [ "1", { "Fn::GetAZs" : "" } ] },
             "MapPublicIpOnLaunch": true,
             "Tags" : [
-               { "Key" : "Name", "Value" : { "Fn::Sub": [ "${app}", { "app": {"Ref" : "AppName" }} ] } }
+               { "Key" : "Name", "Value" : { "Fn::Sub": [ "${app}", { "app": {"Ref" : "TagName" }} ] } }
             ]
          }
       },
@@ -62,7 +62,7 @@
             "AvailabilityZone": { "Fn::Select" : [ "2", { "Fn::GetAZs" : "" } ] },
             "MapPublicIpOnLaunch": true,
             "Tags" : [
-               { "Key" : "Name", "Value" : { "Fn::Sub": [ "${app}", { "app": {"Ref" : "AppName" }} ] } }
+               { "Key" : "Name", "Value" : { "Fn::Sub": [ "${app}", { "app": {"Ref" : "TagName" }} ] } }
             ]
          }
       },
@@ -70,7 +70,7 @@
         "Type" : "AWS::EC2::InternetGateway",
           "Properties" : {
             "Tags" : [
-               { "Key" : "Name", "Value" : { "Fn::Sub": [ "${app}-IGW", { "app": {"Ref" : "AppName" }} ] } }
+               { "Key" : "Name", "Value" : { "Fn::Sub": [ "${app}-IGW", { "app": {"Ref" : "TagName" }} ] } }
             ]
           }
       },
@@ -86,7 +86,7 @@
         "Properties" : {
           "VpcId" : {"Ref" : "VPC"},
           "Tags" : [
-             { "Key" : "Name", "Value" : { "Fn::Sub": [ "${app}-PublicRouteTable", { "app": {"Ref" : "AppName" }} ] } }
+             { "Key" : "Name", "Value" : { "Fn::Sub": [ "${app}-PublicRouteTable", { "app": {"Ref" : "TagName" }} ] } }
           ]
         }
       },

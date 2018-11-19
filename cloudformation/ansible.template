@@ -10,22 +10,12 @@
       "AllowedPattern": "[a-zA-Z][a-zA-Z0-9-]*",
       "ConstraintDescription": "AppName must begin with a letter and contain alphanumeric characters, or a hyphen."
     },
-    "MainStackName" : {
-        "Type" : "String",
-        "Description" : "When used as a sub stack, can be used to enter the main stack name.  Otherwise this defaults to local stack name.",
-        "Default": "",
-        "MaxLength": 64,
-    },
     "Environment": {
       "Type" : "String",
       "AllowedValues" : ["prod", "staging", "test"],
       "Default" : "test",
       "Description" : "Enter the environment",
       "ConstraintDescription" : "Environment must be one of prod, uat, dev, or test"
-    },
-    "VpcId": {
-       "Type" : "AWS::EC2::VPC::Id",
-       "Description" : "VPC ID"
     },
     "SubnetIDs": {
        "Type" : "List<AWS::EC2::Subnet::Id>",
@@ -34,10 +24,6 @@
     "SecurityGroupIDs": {
       "Type" : "List<AWS::EC2::SecurityGroup::Id>",
       "Description" : "List of Security Group IDs"
-    },
-    "LoadBalancerSecurityGroupID": {
-      "Type" : "AWS::EC2::SecurityGroup::Id",
-      "Description" : "Security Group ID"
     },
     "InstanceTypeParameter" : {
       "Type" : "String",
@@ -62,7 +48,7 @@
      "Type" : "String",
      "Description" : "Choose one of OnDemand or Spot",
      "AllowedValues" : ["OnDemand", "Spot"],
-     "Default" : "Spot"
+     "Default" : "OnDemand"
    },
    "InstanceKeyName" : {
       "Type" : "String",
@@ -70,13 +56,8 @@
    },
    "AnsibleControllerDesiredCapacity" : {
      "Type" : "String",
-     "Default" : "2",
+     "Default" : "1",
      "Description" : "Enter the number of ansible controller instances required."
-   },
-   "WebserverDesiredCapacity" : {
-     "Type" : "String",
-     "Default" : "2",
-     "Description" : "Enter the number of webserver instances required."
    }
   },
   "Conditions" : {
@@ -305,248 +286,9 @@
            { "Key" : "Type", "Value" : "AnsibleController", "PropagateAtLaunch" : true }
         ],
       }
-    },
-    "WebserverLaunchConfig" : {
-      "Type" : "AWS::AutoScaling::LaunchConfiguration",
-      "Metadata" : {
-        "Comment1" : "Bootstrap webserver server. Make use of cfn helper scripts for updates and bespoke tag display tool. Update all packages for security patches. Bootstrap apache user with ansible key.",
-
-        "AWS::CloudFormation::Init" : {
-          "configSets" : {
-            "Install" : [ "HelperScripts", "BasePackages", "ApacheSetup", "TagTool" ]
-          },
-          "HelperScripts" : {
-            "files" : {
-              "/etc/cfn/cfn-hup.conf" : {
-                "content" : { "Fn::Join" : ["", [
-                  "[main]\n",
-                  "stack=", { "Ref" : "AWS::StackId" }, "\n",
-                  "region=", { "Ref" : "AWS::Region" }, "\n",
-                  "interval=5\n"
-                ]]},
-                "mode"    : "000400",
-                "owner"   : "root",
-                "group"   : "root"
-              },
-              "/etc/cfn/hooks.d/cfn-auto-reloader.conf" : {
-                "content": { "Fn::Join" : ["", [
-                  "[cfn-auto-reloader-hook]\n",
-                  "triggers=post.update\n",
-                  "path=Resources.WebserverLaunchConfig.Metadata.AWS::CloudFormation::Init\n",
-                  "action=/opt/aws/bin/cfn-init -v ",
-                  "         --stack ", { "Ref" : "AWS::StackName" },
-                  "         --configsets Install ",
-                  "         --resource WebserverLaunchConfig ",
-                  "         --region ", { "Ref" : "AWS::Region" }, "\n",
-                  "runas=root\n"
-                ]]}
-              }
-            },
-            "services" : {
-              "sysvinit" : {
-                "cfn-hup" : { "enabled" : "true", "ensureRunning" : "true",
-                  "files" : ["/etc/cfn/cfn-hup.conf", "/etc/cfn/hooks.d/cfn-auto-reloader.conf"]
-                }
-              }
-            }
-          },
-          "BasePackages" : {
-            "commands" : {
-              "update_yum_packages" : {
-                "command" : "yum update -y"
-              }
-            }
-          },
-          "TagTool" : {
-            "files" : {
-              "/usr/local/bin/ec2_tags.sh" : {
-                "source": "https://raw.githubusercontent.com/Alex-Burgess/InterestingTools/master/ec2_tags.sh",
-                "mode": "000744",
-                "user": "root",
-                "group": "root"
-              }
-            },
-            "commands" : {
-              "create_tag_export_file" : {
-                "command" : "/usr/local/bin/ec2_tags.sh"
-              },
-            }
-          },
-          "ApacheSetup" : {
-            "files" : {
-              "/etc/sudoers.d/apache-sudo-privileges" : {
-                "content" : { "Fn::Join" : ["", [
-                  "## Allow apache user to run sudo commands as playbook hack\n",
-                  "apache ALL= NOPASSWD: ALL\n"
-                  ]]},
-                "mode": "000644",
-                "user": "root",
-                "group": "root"
-              }
-            },
-            "commands" : {
-              "1_create_apache_user" : {
-                "command" : "useradd -m apache",
-                "test" : "test -z `grep apache /etc/passwd`"
-              },
-              "2_add_ec2-user_to_apache_group" : {
-                "command" : "usermod -a -G apache ec2-user"
-              },
-              "3_make_ssh_directory_for_ansible" : {
-                "command" : "su apache -c 'mkdir /home/apache/.ssh'",
-                "test" : "test ! -e /home/apache/.ssh"
-              },
-              "4_set_file_permissions_of_ansible_ssh_directory" : {
-                "command" : "su apache -c 'chmod 700 /home/apache/.ssh'"
-              },
-              "5_get_latest_ansible_pub_key" : {
-                "command" : "su apache -c 'aws ssm get-parameter --name \"/Ansible/HelloWorld/$env_var/public_key\" --with-decryption --query Parameter.Value --output text --region `curl -s http://169.254.169.254/latest/dynamic/instance-identity/document | grep region | cut -f4 -d \"\\\"\"` > /home/apache/.ssh/authorized_keys'",
-                "env" : { "env_var" : { "Ref" : "Environment"} },
-              }
-            }
-          }
-        }
-      },
-      "Properties" : {
-        "KeyName": { "Ref" : "InstanceKeyName"},
-        "ImageId" : { "Ref" : "ImageID" },
-        "SecurityGroups" : {"Ref": "SecurityGroupIDs"},
-        "InstanceType" : { "Ref" : "InstanceTypeParameter" },
-        "IamInstanceProfile" : { "Ref": "InstanceProfileName"},
-        "AssociatePublicIpAddress" : true,
-        "SpotPrice" : {"Fn::If": [ "IsSpot", { "Ref" : "SpotPrice" }, { "Ref" : "AWS::NoValue"}]},
-        "UserData": { "Fn::Base64" : { "Fn::Join" : ["", [
-           "#!/bin/bash -xe\n",
-           "yum install -y aws-cfn-bootstrap\n",
-
-           "# Install the files and packages from the metadata\n",
-           "/opt/aws/bin/cfn-init -v ",
-           "         --stack ", { "Ref" : "AWS::StackName" },
-           "         --resource WebserverLaunchConfig ",
-           "         --configsets Install ",
-           "         --region ", { "Ref" : "AWS::Region" }, "\n",
-
-           "# Start up the cfn-hup daemon to listen for changes to the Web Server metadata\n",
-           "/opt/aws/bin/cfn-hup || error_exit 'Failed to start cfn-hup'\n",
-
-           "# Signal the status from cfn-init\n",
-           "/opt/aws/bin/cfn-signal -e $? ",
-           "         --stack ", { "Ref" : "AWS::StackName" },
-           "         --resource WebserverGroup ",
-           "         --region ", { "Ref" : "AWS::Region" }, "\n"
-        ]]}}
-      }
-    },
-    "WebserverGroup": {
-      "Type" : "AWS::AutoScaling::AutoScalingGroup",
-      "UpdatePolicy" : {
-        "AutoScalingRollingUpdate" : {
-          "MinInstancesInService" : "1",
-          "MaxBatchSize" : "1",
-          "PauseTime" : "PT2M",
-          "WaitOnResourceSignals" : "true"
-        }
-      },
-      "Properties" : {
-        "VPCZoneIdentifier" : { "Ref": "SubnetIDs" },
-        "AvailabilityZones" : { "Fn::GetAZs" : ""},
-        "LaunchConfigurationName" : { "Ref" : "WebserverLaunchConfig" },
-        "DesiredCapacity" : { "Ref" : "WebserverDesiredCapacity" },
-        "MaxSize" : { "Ref" : "WebserverDesiredCapacity" },
-        "MinSize" : "1",
-        "TargetGroupARNs" : [ { "Ref" : "ALBTargetGroup" },  { "Ref" : "ALBMonitoringTargetGroup" } ],
-        "Tags": [
-           { "Key" : "Name", "Value" : "Webserver", "PropagateAtLaunch" : true },
-           { "Key" : "WebApp", "Value" : {"Ref" : "AppName" }, "PropagateAtLaunch" : true },
-           { "Key" : "Application", "Value" : {"Ref" : "AppName" }, "PropagateAtLaunch" : true },
-           { "Key" : "Environment", "Value" : { "Ref" : "Environment" }, "PropagateAtLaunch" : true },
-           { "Key" : "Type", "Value" : "Webserver", "PropagateAtLaunch" : true }
-        ],
-      }
-    },
-    "ApplicationLoadBalancer" : {
-      "Type" : "AWS::ElasticLoadBalancingV2::LoadBalancer",
-      "Properties" : {
-        "Name" : { "Fn::Sub": [ "${stack}-${env}", { "stack": { "Ref" : "MainStackName" }, "env": { "Ref" : "Environment" }} ] },
-        "Scheme" : "internet-facing",
-        "Subnets" : { "Ref": "SubnetIDs" },
-        "SecurityGroups" : [{"Ref": "LoadBalancerSecurityGroupID"}],
-        "Tags": [
-           { "Key" : "Name", "Value" : {"Fn::Join" : [ "-", [ {"Ref" : "AppName" }, "Webserver" ] ]} },
-           { "Key" : "Application", "Value" : {"Ref" : "AppName" } },
-           { "Key" : "Environment", "Value" : { "Ref" : "Environment" } },
-           { "Key" : "Type", "Value" : "Webserver" }
-         ]
-      }
-    },
-    "ALBTargetGroup" : {
-      "Type" : "AWS::ElasticLoadBalancingV2::TargetGroup",
-      "Properties" : {
-        "Name" : {"Fn::Join" : [ "-", [ { "Fn::GetAtt" : [ "ApplicationLoadBalancer", "LoadBalancerName" ] } ] ]},
-        "HealthCheckIntervalSeconds" : 60,
-        "UnhealthyThresholdCount" : 10,
-        "HealthCheckPath" : "/",
-        "Port" : 80,
-        "Protocol" : "HTTP",
-        "VpcId" : { "Ref": "VpcId" },
-        "TargetGroupAttributes" : [
-          {
-            "Key" : "deregistration_delay.timeout_seconds",
-            "Value" : "60"
-          }
-        ]
-      }
-    },
-    "ALBMonitoringTargetGroup" : {
-      "Type" : "AWS::ElasticLoadBalancingV2::TargetGroup",
-      "Properties" : {
-        "Name" : {"Fn::Join" : [ "-", [ { "Fn::GetAtt" : [ "ApplicationLoadBalancer", "LoadBalancerName" ] }, "monitor" ] ]},
-        "HealthCheckIntervalSeconds" : 60,
-        "UnhealthyThresholdCount" : 10,
-        "HealthCheckPath" : "/",
-        "Port" : 8080,
-        "Protocol" : "HTTP",
-        "VpcId" : { "Ref": "VpcId" },
-        "TargetGroupAttributes" : [
-          {
-            "Key" : "deregistration_delay.timeout_seconds",
-            "Value" : "60"
-          }
-        ]
-      }
-    },
-    "ALBListener" : {
-      "Type" : "AWS::ElasticLoadBalancingV2::Listener",
-      "Properties" : {
-        "DefaultActions" : [{
-          "Type" : "forward",
-          "TargetGroupArn" : { "Ref" : "ALBTargetGroup" }
-        }],
-        "LoadBalancerArn" : { "Ref" : "ApplicationLoadBalancer" },
-        "Port" : 80,
-        "Protocol" : "HTTP"
-      }
-    },
-    "MonitorListenerRule": {
-      "Type": "AWS::ElasticLoadBalancingV2::ListenerRule",
-      "Properties": {
-        "Actions": [{
-          "Type": "forward",
-          "TargetGroupArn": { "Ref": "ALBMonitoringTargetGroup" }
-        }],
-        "Conditions": [{
-          "Field": "path-pattern",
-          "Values": [ "/monitoring/*" ]
-        }],
-        "ListenerArn": { "Ref": "ALBListener" },
-        "Priority": 1
-      }
     }
   },
   "Outputs" : {
-    "URL" : {
-      "Description" : "The URL of the website",
-      "Value" :  { "Fn::Join" : [ "", [ "http://", { "Fn::GetAtt" : [ "ApplicationLoadBalancer", "DNSName" ]}]]}
-    }
+
   }
 }

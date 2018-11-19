@@ -13,17 +13,17 @@
      "HasMainStackName": {"Fn::Not": [{"Fn::Equals": ["", {"Ref": "MainStackName"}]}]}
    },
    "Resources": {
-      "AnsibleHelloworldInstanceProfile" : {
+      "AnsibleInstanceProfile" : {
         "Type" : "AWS::IAM::InstanceProfile",
         "Properties" : {
           "InstanceProfileName": { "Fn::If": [
             "HasMainStackName",
-            { "Fn::Join" : [ "-", [ "AnsibleHelloworldInstanceProfile", { "Ref" : "MainStackName"} ] ] },
+            { "Fn::Join" : [ "-", [ "AnsibleInstanceProfile", { "Ref" : "MainStackName"} ] ] },
             {"Ref": "AWS::StackName"}
           ]},
           "Path" : "/",
           "Roles" : [
-            { "Ref" : "AnsibleHelloworldEC2Role" }
+            { "Ref" : "AnsibleEC2Role" }
           ]
         }
       },
@@ -44,7 +44,7 @@
           },
           "Roles" : [
             {
-              "Ref" : "AnsibleHelloworldEC2Role"
+              "Ref" : "AnsibleEC2Role"
             }
           ]
         }
@@ -66,7 +66,7 @@
           },
           "Roles" : [
             {
-              "Ref" : "AnsibleHelloworldEC2Role"
+              "Ref" : "AnsibleEC2Role"
             }
           ]
         }
@@ -90,17 +90,17 @@
           },
           "Roles" : [
             {
-              "Ref" : "AnsibleHelloworldEC2Role"
+              "Ref" : "AnsibleEC2Role"
             }
           ]
         }
       },
-      "AnsibleHelloworldEC2Role" : {
+      "AnsibleEC2Role" : {
         "Type" : "AWS::IAM::Role",
         "Properties" : {
           "RoleName": { "Fn::If": [
             "HasMainStackName",
-            { "Fn::Join" : [ "-", [ "AnsibleHelloworldEC2Role", { "Ref" : "MainStackName"} ] ] },
+            { "Fn::Join" : [ "-", [ "AnsibleEC2Role", { "Ref" : "MainStackName"} ] ] },
             {"Ref": "AWS::StackName"}
           ]},
           "AssumeRolePolicyDocument": {
@@ -122,9 +122,9 @@
       }
    },
    "Outputs" : {
-      "AnsibleHelloworldInstanceProfileName" : {
+      "AnsibleInstanceProfileName" : {
          "Description" : "EC2 Instance profile name",
-         "Value" : { "Ref" : "AnsibleHelloworldInstanceProfile" }
+         "Value" : { "Ref" : "AnsibleInstanceProfile" }
       }
    }
 }

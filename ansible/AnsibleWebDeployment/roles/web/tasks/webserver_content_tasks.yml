@@ -28,3 +28,11 @@
     path: /var/www/html/{{ site }}/config/version.ini
     regexp: '^version = '
     line: "version = {{ git_branch | default('master') }}"
+- name: Add web application name to config
+  lineinfile:
+    path: /var/www/html/{{ site }}/config/version.ini
+    regexp: '^webapp = '
+    line: "webapp = {{ webapp | default( inventory_file ) }}"
+- name: Debug inventory output
+  debug:
+    msg: "Inventory output {{ inventory_file }}"
