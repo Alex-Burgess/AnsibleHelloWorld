@@ -1,3 +1,5 @@
+# Execution: ansible-playbook create_site.yml
+
 - name: Create new site structure
   hosts: localhost
   roles:
