@@ -1,0 +1,3 @@
+---
+site_name: "default.com"
+site_base_path: "~/Development/AnsibleWebDemo/sites/"

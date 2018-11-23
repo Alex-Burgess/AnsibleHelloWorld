@@ -1,0 +1,3 @@
+---
+- name: Create content source directory for {{ site_name }}
+  file: path={{ site_base_path }}/{{ site_name }}/html state=directory

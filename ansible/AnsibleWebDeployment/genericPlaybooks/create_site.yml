@@ -1,0 +1,4 @@
+- name: Create new site structure
+  hosts: localhost
+  roles:
+    - site
